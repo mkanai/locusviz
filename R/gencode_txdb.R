@@ -1,0 +1,91 @@
+# cf. GenomicState::gencode_txdb
+gencode_txdb <- function(version = '19',
+                         genome = c('hg19', 'hg38'),
+                         chrs = paste0('chr', seq_len(22))) {
+  genome <- match.arg(genome)
+
+  ## Locate file
+  if (genome == 'hg19') {
+    gtf_file <-
+      'ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gff3.gz'
+    canonical_transcript_file <- system.file(package = "locusviz", "extdata", "canonical_transcripts_grch37.tsv.gz")
+  } else if (genome == 'hg38') {
+    gtf_file <-
+      'ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/gencode.v34.annotation.gff3.gz'
+    # https://github.com/broadinstitute/gnomad-browser/blob/master/data/docs/gene_models.md#canonical-transcripts
+    canonical_transcript_file <- system.file(package = "locusviz", "extdata", "canonical_transcripts_grch38.tsv.gz")
+  }
+
+
+  ## Import the data
+  message(paste(Sys.time(), 'importing', gtf_file))
+  gencode_gtf <- rtracklayer::import(gtf_file)
+  canonical_transcripts <- data.table::fread(canonical_transcript_file, data.table = F)
+
+  # filter transcripts by
+  # 1) MANE_Select, or
+  # 2) Gencode basic, 3) protein coding, 4) ensembl canonical, and 5) has HGNC ID
+  filter_transcripts = function(gencode_gtf, canonical_transcripts) {
+    meta = GenomicRanges::elementMetadata(gencode_gtf)
+    MANE_Select = any(meta[, "tag"] == "MANE_Select")
+
+    basic = any(meta[, "tag"] == "basic")
+    protein_coding = meta$gene_type == "protein_coding"
+    canonical_transcripts = dplyr::filter(canonical_transcripts, !(gene_id %in% stringr::str_split_fixed(meta$gene_id[MANE_Select], "\\.", 2)))
+    canonical = stringr::str_split_fixed(meta$transcript_id, "\\.", 2)[,1] %in% canonical_transcripts$canonical_transcript_id
+    has_hgnc_id = if ("hgnc_id" %in% colnames(meta)) {
+      !is.na(meta$hgnc_id)
+    } else {
+      hgnc = data.table::fread(system.file(package = "locusviz", "extdata", "ensembl_hgncid.tsv.gz"), data.table = F, col.names = c("gene_id", "transcript_id", "hgnc_id")) %>%
+        dplyr::filter(!is.na(hgnc_id) & hgnc_id != "")
+      stringr::str_split_fixed(meta$gene_id, "\\.", 2)[,1] %in% hgnc$gene_id
+    }
+    return(gencode_gtf[MANE_Select | (basic & protein_coding & canonical & has_hgnc_id)])
+  }
+  gencode_gtf <- filter_transcripts(gencode_gtf, canonical_transcripts)
+
+  ## Keep only the main chrs
+  message(paste(Sys.time(), 'keeping relevant chromosomes'))
+  gencode_gtf <- GenomeInfoDb::keepSeqlevels(gencode_gtf, chrs,
+                                             pruning.mode = 'coarse')
+
+  # Doesn't work because of the different seqlevels
+  # txdb <- makeTxDbFromGFF(
+  #     gtf_file,
+  #     organism = 'Homo sapiens',
+  #     chrominfo = Seqinfo(genome="hg19")
+  # )
+
+  message(paste(Sys.time(), 'preparing metadata'))
+  metadata <- GenomicFeatures:::.prepareGFFMetadata(
+    file = gtf_file,
+    dataSource = NA,
+    organism = 'Homo sapiens',
+    taxonomyId = NA,
+    miRBaseBuild = NA,
+    metadata = NULL
+  )
+
+  message(paste(Sys.time(), 'building the txdb object'))
+  gr <- GenomicFeatures:::.tidy_seqinfo(
+    gr = gencode_gtf,
+    circ_seqs = GenomicFeatures::DEFAULT_CIRC_SEQS,
+    chrominfo = GenomeInfoDb::Seqinfo(genome = genome)
+  )
+
+  ## Prune again since GenomeInfoDb::Seqinfo() will return many seqlevels
+  gr <-
+    GenomeInfoDb::keepSeqlevels(gr, chrs, pruning.mode = 'coarse')
+
+  gr$Name = gr$gene_name
+
+  txdb <-
+    GenomicFeatures::makeTxDbFromGRanges(gr, metadata = metadata)
+  return(txdb)
+}
+
+# txdb_v34_hg38 = gencode_txdb(genome = 'hg38', chrs = paste0('chr', c(seq_len(22), 'X')))
+# AnnotationDbi::saveDb(txdb_v34_hg38, "inst/extdata/txdb_v34_hg38.sqlite")
+#
+# txdb_v19_hg19 = gencode_txdb(genome = 'hg19', chrs = paste0('chr', c(seq_len(22), 'X')))
+# AnnotationDbi::saveDb(txdb_v19_hg19, "inst/extdata/txdb_v19_hg19.sqlite")
