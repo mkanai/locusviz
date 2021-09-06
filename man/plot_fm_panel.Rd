@@ -17,6 +17,7 @@ plot_fm_panel(
   ggtheme = get_default_theme(),
   rasterize = FALSE,
   rasterize.dpi = 300,
+  cs.colors = NULL,
   relevel.cs_id = TRUE
 )
 }

@@ -28,6 +28,7 @@ plot_fm_panel = function(data,
                          ggtheme = get_default_theme(),
                          rasterize = FALSE,
                          rasterize.dpi = 300,
+                         cs.colors = NULL,
                          relevel.cs_id = TRUE) {
   g_fm_title = or_missing(!is.null(title), ggtitle(title))
   scale_x = or_missing(!is.null(xlim), coord_cartesian(xlim = xlim))
@@ -35,7 +36,11 @@ plot_fm_panel = function(data,
                                breaks = ybreaks,
                                expand = expansion(c(0, 0.1), 0))
 
-  if (relevel.cs_id) {
+  if (is.null(cs.colors)) {
+    cs.colors = BuenColors::jdb_palette("corona")
+  }
+
+  if (is.null(cs.colors) & relevel.cs_id) {
     visible_cs_ids = dplyr::filter(data, xlim[1] <= position &
                                      position <= xlim[2]) %>%
       tidyr::drop_na(cs_id) %>%
@@ -102,11 +107,9 @@ plot_fm_panel = function(data,
     ggtheme +
     scale_x +
     scale_y +
-    scale_color_manual(
-      values = BuenColors::jdb_palette("corona"),
-      na.translate = TRUE,
-      na.value = "grey50"
-    )
+    scale_color_manual(values = cs.colors,
+                       na.translate = TRUE,
+                       na.value = "grey50")
 
   return(p_fm)
 }

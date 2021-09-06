@@ -21,18 +21,27 @@ plot_lollipop = function(df,
   my_theme =
     BuenColors::pretty_plot(fontsize = 8) +
     theme(
+      axis.title.x = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.ticks.length.x = unit(0, "pt"),
       legend.position = c(1, 1),
       legend.justification = c(1, 1),
       legend.title = element_text(margin = margin(0, 0, 0, 0)),
       legend.background = element_blank(),
       legend.key.size = unit(0.3, "cm"),
       panel.border = element_blank(),
-      plot.margin = margin(0, 0, 0, 0)
+      plot.margin = margin(0, 0, 0, 0),
+      plot.tag = element_text(face = 'bold'),
+      plot.tag.position = c(0, 1)
     )
 
   gr <-
-    range(subset(GenomicFeatures::transcripts(txdb), tx_name == gene_symbol),
-          ignore.strand = TRUE)
+    range(subset(
+      GenomicFeatures::transcripts(txdb),
+      tx_name %in% gene_symbol
+    ),
+    ignore.strand = TRUE)
   chrom = stringr::str_remove(seqnames(gr), "^chr")
   start = start(gr)
   end = end(gr)
@@ -48,17 +57,6 @@ plot_lollipop = function(df,
     }
   }
   print(c(start, end))
-
-  # df = df %>%
-  #   filter(pip > 0.1 & !is.na(susie.beta_posterior) & vep.consequence_category != "Synonymous" & vep.gene_most_severe == gene_symbol) %>%
-  #   mutate(
-  #     vep.hgvsp = stringr::str_remove(vep.hgvsp, "^ENSP.*:"),
-  #     chromosome = parse_chromosome(variant),
-  #     position = parse_position(variant),
-  #     signed_pip = sign(susie.beta_posterior) * pip,
-  #   ) %>%
-  #   dplyr::filter(chromosome == chrom & start <= position & position <= end) %>%
-  #   arrange(position,-pip, domain, trait)
 
   assign_trait_idx = function(df) {
     trait_idx = dplyr::select(df, trait) %>%
@@ -105,10 +103,6 @@ plot_lollipop = function(df,
       hjust = 0
       p_theme = my_theme +
         theme(
-          axis.title.x = element_blank(),
-          axis.text.x = element_blank(),
-          axis.ticks.x = element_blank(),
-          axis.ticks.length.x = unit(0, "pt"),
           axis.line.y = element_line(),
           legend.position = "none"
         )
@@ -203,16 +197,18 @@ plot_lollipop = function(df,
   gof_pos = df %>% dplyr::filter(susie.beta_posterior > 0) %>% .$position %>% unique()
   lof_pos = df %>% dplyr::filter(susie.beta_posterior < 0) %>% .$position %>% unique()
 
-  pfam.domains = get_pfam_domains(
-    gene_symbol,
-    remove.unknown.domains = remove.unknown.domains,
-    genome_build = genome_build,
-    txdb = txdb
-  )
+  pfam.domains = purrr::map_dfr(gene_symbol, function(x) {
+    get_pfam_domains(
+      x,
+      remove.unknown.domains = remove.unknown.domains,
+      genome_build = genome_build,
+      txdb = txdb
+    )
+  })
 
   clinvar.snv = clinvar %>%
     filter(
-      GeneSymbol == gene_symbol &
+      GeneSymbol %in% gene_symbol &
         ClinicalSignificance %in% c("Pathogenic", "Likely pathogenic")
     ) %>%
     filter(Type == "single nucleotide variant") %>%
@@ -225,7 +221,7 @@ plot_lollipop = function(df,
 
   clinvar.sv = clinvar %>%
     filter(
-      GeneSymbol == gene_symbol &
+      GeneSymbol %in% gene_symbol &
         ClinicalSignificance %in% c("Pathogenic", "Likely pathogenic")
     ) %>%
     # filter(Type != "single nucleotide variant") %>%
@@ -337,6 +333,7 @@ plot_lollipop = function(df,
                             color = 'grey50'
                           ))
 
+  plot.gene.label = plot.extra.genes | (length(gene_symbol) > 1)
   p_gene = ggplot() +
     ggbio::geom_alignment(
       txdb,
@@ -344,16 +341,17 @@ plot_lollipop = function(df,
       cds.rect.h = 0.1,
       color = gene_col,
       fill = gene_col,
-      label = plot.extra.genes,
+      label = plot.gene.label,
       label.size = 2,
       subset.tx_name = locusviz::or_missing(!plot.extra.genes, gene_symbol)
     ) +
-    geom_text(
-      aes(x = start, y = 1, label = gene_symbol),
-      hjust = 1,
-      nudge_x = -500,
-      size = 2
-    ) +
+    locusviz::or_missing(!plot.gene.label,
+                         geom_text(
+                           aes(x = start, y = 1, label = gene_symbol),
+                           hjust = 1,
+                           nudge_x = -500,
+                           size = 2
+                         )) +
     g_domains +
     g_large_deletion +
     # SV

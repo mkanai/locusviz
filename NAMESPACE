@@ -3,6 +3,7 @@
 export(UpSet2)
 export(annotate_hrange)
 export(compute_distance_to_gene)
+export(get_cs_color_mapping)
 export(get_default_theme)
 export(get_gnomad_colors)
 export(highlight_vline)

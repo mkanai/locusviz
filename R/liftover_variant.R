@@ -8,7 +8,9 @@
 liftover_variant = function(variant, genome_build = c("hg19", "hg38")) {
   genome_build = match.arg(genome_build)
 
-  gr = parse_variant(variant) %>%
+  uniq_variant = unique(variant)
+
+  gr = parse_variant(uniq_variant) %>%
     dplyr::mutate(start = position - 1,
                   end = position) %>%
     GenomicRanges::makeGRangesFromDataFrame(seqnames.field = "chromosome", keep.extra.columns = TRUE)
@@ -26,15 +28,26 @@ liftover_variant = function(variant, genome_build = c("hg19", "hg38")) {
 
   ret =
     rtracklayer::liftOver(gr, chain) %>%
-    tibble::as_tibble()
+    as.list() %>%
+    purrr::map_dfr(function(x) {
+      if (length(x) == 0) {
+        return(tibble::tibble(
+          seqnames = NA,
+          end = NA,
+          ref = NA,
+          alt = NA
+        ))
+      }
+      return(tibble::as_tibble(x))
+    })
 
   if (genome_build == "hg38") {
     ret = dplyr::mutate(ret, seqnames = stringr::str_remove(seqnames, "^chr"))
   }
 
-  dplyr::mutate(
+  ret = dplyr::mutate(
     ret,
-    variant = variant,
+    variant = uniq_variant,
     new_variant = stringr::str_c(seqnames, end, ref, alt, sep = ":"),
     new_chromosome = seqnames,
     new_position = end,
@@ -42,4 +55,7 @@ liftover_variant = function(variant, genome_build = c("hg19", "hg38")) {
     new_alt = alt
   ) %>%
     dplyr::select(variant, dplyr::starts_with("new_"))
+  ret = dplyr::left_join(data.frame(variant = variant), ret)
+
+  return(ret)
 }
