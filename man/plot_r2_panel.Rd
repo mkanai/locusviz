@@ -10,6 +10,8 @@ plot_r2_panel(
   xlim = NULL,
   ylim = c(0, 1),
   ybreaks = seq(0, 1, by = 0.2),
+  point.size = 1.5,
+  point.size2 = 3,
   nlog10p_threshold = 1,
   ggtheme = get_default_theme(),
   rasterize = FALSE,

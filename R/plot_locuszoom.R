@@ -33,9 +33,11 @@ plot_locuszoom = function(data,
                           manhattan.breaks = ggplot2::waiver(),
                           manhattan.loglog_p = TRUE,
                           nlog10p_threshold = 0,
+                          fm.args = list(),
                           fm.ylim = NULL,
                           fm.breaks = NULL,
                           fm.legend_title = "95% CS",
+                          r2.args = list(),
                           gene.args = list(),
                           gene_score.args = list(),
                           plot.manhattan = TRUE,
@@ -43,6 +45,7 @@ plot_locuszoom = function(data,
                           plot.r2 = FALSE,
                           plot.gene = TRUE,
                           plot.gene_score = FALSE,
+                          fontsize = 8,
                           patchwork = TRUE,
                           rasterize = FALSE,
                           rasterize.dpi = 300) {
@@ -58,66 +61,80 @@ plot_locuszoom = function(data,
   start = xlim[1]
   end = xlim[2]
 
-  p_manhattan = or_missing(
-    plot.manhattan,
-    plot_manhattan_panel(
-      data,
-      highlight_pos = highlight_pos,
-      xlim = xlim,
-      title = manhattan.title,
-      ybreaks = manhattan.breaks,
-      plot.loglog_p = manhattan.loglog_p,
-      nlog10p_threshold = nlog10p_threshold,
-      ggtheme = get_default_theme(
-        hide.xtext = (plot.fm | plot.r2),
-        hide.xtitle = TRUE
-      ),
-      rasterize = rasterize,
-      rasterize.dpi = rasterize.dpi
-    )
-  )
-  p_fm = or_missing(
-    plot.fm,
-    plot_fm_panel(
-      data,
-      highlight_pos = highlight_pos,
-      xlim = xlim,
-      ylim = fm.ylim,
-      ybreaks = fm.breaks,
-      legend_title = fm.legend_title,
-      ggtheme = get_default_theme(hide.xtext = plot.r2, hide.xtitle = TRUE),
-      rasterize = rasterize,
-      rasterize.dpi = rasterize.dpi
-    )
-  )
-  p_r2 = or_missing(
-    plot.r2,
-    plot_r2_panel(
-      data,
-      highlight_pos = highlight_pos,
-      xlim = xlim,
-      nlog10p_threshold = nlog10p_threshold,
-      ggtheme = get_default_theme(hide.xtitle = TRUE),
-      rasterize = rasterize,
-      rasterize.dpi = rasterize.dpi
-    )
-  )
+  p_manhattan = or_missing(plot.manhattan,
+                           do.call(plot_manhattan_panel, c(
+                             list(
+                               data,
+                               highlight_pos = highlight_pos,
+                               xlim = xlim,
+                               title = manhattan.title,
+                               ybreaks = manhattan.breaks,
+                               plot.loglog_p = manhattan.loglog_p,
+                               nlog10p_threshold = nlog10p_threshold,
+                               ggtheme = get_default_theme(
+                                 fontsize = fontsize,
+                                 hide.xtext = (plot.fm | plot.r2),
+                                 hide.xtitle = TRUE
+                               ),
+                               rasterize = rasterize,
+                               rasterize.dpi = rasterize.dpi
+                             ),
+                             manhattan.args
+                           )))
+  p_fm = or_missing(plot.fm,
+                    do.call(plot_fm_panel, c(
+                      list(
+                        data,
+                        highlight_pos = highlight_pos,
+                        xlim = xlim,
+                        ylim = fm.ylim,
+                        ybreaks = fm.breaks,
+                        legend_title = fm.legend_title,
+                        ggtheme = get_default_theme(
+                          fontsize = fontsize,
+                          hide.xtext = plot.r2,
+                          hide.xtitle = TRUE
+                        ),
+                        rasterize = rasterize,
+                        rasterize.dpi = rasterize.dpi
+                      ),
+                      fm.args
+                    )))
+  p_r2 = or_missing(plot.r2,
+                    do.call(plot_r2_panel, c(
+                      list(
+                        data,
+                        highlight_pos = highlight_pos,
+                        xlim = xlim,
+                        nlog10p_threshold = nlog10p_threshold,
+                        ggtheme = get_default_theme(fontsize = fontsize, hide.xtitle = TRUE),
+                        rasterize = rasterize,
+                        rasterize.dpi = rasterize.dpi
+                      ),
+                      r2.args
+                    )))
   p_gene = or_missing(plot.gene,
                       do.call(plot_gene_panel,
                               c(
-                                list(chromosome,
-                                     start,
-                                     end,
-                                     highlight_pos = highlight_pos),
+                                list(
+                                  chromosome,
+                                  start,
+                                  end,
+                                  highlight_pos = highlight_pos,
+                                  fontsize = fontsize
+                                ),
                                 gene.args
                               )))
 
   p_gene_score = or_missing(plot.gene_score,
                             do.call(plot_gene_score_panel, c(
-                              list(chromosome,
-                                   start,
-                                   end,
-                                   highlight_pos = highlight_pos),
+                              list(
+                                chromosome,
+                                start,
+                                end,
+                                highlight_pos = highlight_pos,
+                                fontsize = fontsize
+                              ),
                               gene_score.args
                             )))
 

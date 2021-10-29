@@ -9,6 +9,7 @@ plot_gene_score_panel = function(chromosome,
                                  distance.type = c("GB", "TSS"),
                                  method.levels = NULL,
                                  colors = NULL,
+                                 fontsize = 8,
                                  area.max_size = 4) {
   genome_build = match.arg(genome_build)
   distance.type = match.arg(distance.type)
@@ -44,7 +45,7 @@ plot_gene_score_panel = function(chromosome,
       color = method,
       alpha = score
     )) +
-    get_default_theme(hide.xtitle = TRUE, hide.ytitle = TRUE) +
+    get_default_theme(fontsize = fontsize, hide.xtitle = TRUE, hide.ytitle = TRUE) +
     theme(
       axis.text.x = element_text(angle = 90, vjust = 0.5),
       panel.grid.major.x = element_line(),
