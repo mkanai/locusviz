@@ -16,7 +16,8 @@ plot_gene_panel(
   point.size = 2,
   label.size = 2,
   arrow.rate = 0.015,
-  length = unit(0.1, "cm")
+  length = unit(0.1, "cm"),
+  background.layers = NULL
 )
 }
 \arguments{

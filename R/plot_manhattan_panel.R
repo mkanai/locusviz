@@ -37,6 +37,7 @@ plot_manhattan_panel = function(data,
                                 r2_cols = c("navy", "lightskyblue", "green", "orange", "red"),
                                 lead_variant_col = "purple3",
                                 ggtheme = get_default_theme(),
+                                background.layers = NULL,
                                 rasterize = FALSE,
                                 rasterize.dpi = 300) {
   if (plot.loglog_p) {
@@ -70,6 +71,10 @@ plot_manhattan_panel = function(data,
     ))
   }
 
+  if (!is.null(background.layers) & !is.list(background.layers)) {
+    background.layers = list(background.layers)
+  }
+
   rasterize_f = ifelse(rasterize, function(p) {
     ggrastr::rasterize(p, dpi = rasterize.dpi)
   }, function(p) {
@@ -77,6 +82,7 @@ plot_manhattan_panel = function(data,
   })
 
   p_manhattan = ggplot() +
+    background.layers +
     geom_hline(
       yintercept = -log10(5e-8),
       linetype = "dashed",
@@ -114,7 +120,7 @@ plot_manhattan_panel = function(data,
     ) +
     labs(
       title = or_missing(!is.null(title), ggtitle(title)),
-      x = "Position",
+      x = sprintf("Chromosome %s", stringr::str_remove(data$chromosome[1], "^chr")),
       y = expression(paste(-log[10], "(", italic(P), ")")),
       color = expression(italic(r) ^ 2)
     ) +

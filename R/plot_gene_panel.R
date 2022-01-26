@@ -24,7 +24,8 @@ plot_gene_panel = function(chromosome,
                            point.size = 2,
                            label.size = 2,
                            arrow.rate = 0.015,
-                           length = unit(0.1, "cm")) {
+                           length = unit(0.1, "cm"),
+                           background.layers = NULL) {
   genome_build = match.arg(genome_build)
 
   if (is.null(txdb)) {
@@ -33,10 +34,14 @@ plot_gene_panel = function(chromosome,
   if (!stringr::str_starts(chromosome, "chr")) {
     chromosome = paste0("chr", chromosome)
   }
+  if (!is.null(background.layers) & !is.list(background.layers)) {
+    background.layers = list(background.layers)
+  }
 
   gr = GenomicRanges::GRanges(seqnames = chromosome, ranges = IRanges(start, end))
 
   p_gene = ggplot() +
+    background.layers +
     highlight_vline(highlight_pos) +
     tryCatch({
       ggbio::geom_alignment(
@@ -50,7 +55,7 @@ plot_gene_panel = function(chromosome,
         length = length
       )
     }, error = function(msg) {
-      message(msg)
+      message(conditionMessage(msg))
       NULL
     }) +
     or_missing(

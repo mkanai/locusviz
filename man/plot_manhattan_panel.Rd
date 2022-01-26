@@ -20,6 +20,7 @@ plot_manhattan_panel(
   r2_cols = c("navy", "lightskyblue", "green", "orange", "red"),
   lead_variant_col = "purple3",
   ggtheme = get_default_theme(),
+  background.layers = NULL,
   rasterize = FALSE,
   rasterize.dpi = 300
 )

@@ -84,8 +84,37 @@ gencode_txdb <- function(version = '19',
   return(txdb)
 }
 
-# txdb_v34_hg38 = gencode_txdb(genome = 'hg38', chrs = paste0('chr', c(seq_len(22), 'X')))
-# AnnotationDbi::saveDb(txdb_v34_hg38, "inst/extdata/txdb_v34_hg38.sqlite")
-#
-# txdb_v19_hg19 = gencode_txdb(genome = 'hg19', chrs = paste0('chr', c(seq_len(22), 'X')))
-# AnnotationDbi::saveDb(txdb_v19_hg19, "inst/extdata/txdb_v19_hg19.sqlite")
+get_tss_gene_body = function(txdb, chromosomes = paste0("chr", c(seq(22), "X"))) {
+  purrr::map_dfr(chromosomes, function(chrom) {
+    gr = GenomicRanges::GRanges(seqnames = chrom,
+                                ranges = IRanges::IRanges(1, .Machine$integer.max))
+    biovizBase::crunch(txdb, which = gr) %>%
+      GenomicRanges::as.data.frame() %>%
+      dplyr::filter(type == "exon") %>%
+      dplyr::group_by(tx_id) %>%
+      dplyr::summarize(
+        tx_name = tx_name[1],
+        chromosome = seqnames[1],
+        strand = strand[1],
+        start = min(start),
+        end = max(end),
+        tss = ifelse(strand == "+", start, end)
+      ) %>%
+      dplyr::arrange(chromosome, start)
+  })
+}
+
+write_txdb_files = function(chromosomes = paste0('chr', c(seq(22), 'X'))) {
+  txdb_v34_hg38 = gencode_txdb(genome = 'hg38', chrs = chromosomes)
+  AnnotationDbi::saveDb(txdb_v34_hg38, "inst/extdata/txdb_v34_hg38.sqlite")
+
+  txdb_v19_hg19 = gencode_txdb(genome = 'hg19', chrs = chromosomes)
+  AnnotationDbi::saveDb(txdb_v19_hg19, "inst/extdata/txdb_v19_hg19.sqlite")
+
+  tss_v34_hg38 = get_tss_gene_body(txdb_v34_hg38, chromosomes)
+  save(tss_v34_hg38, file = "data/tss_v34_hg38.RData")
+
+  tss_v19_hg19 = get_tss_gene_body(txdb_v19_hg19, chromosomes) %>%
+    dplyr::mutate(chromosome = stringr::str_remove(chromosome, "^chr"))
+  save(tss_v19_hg19, file = "data/tss_v19_hg19.RData")
+}
