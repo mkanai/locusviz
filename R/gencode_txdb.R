@@ -11,9 +11,9 @@ gencode_txdb <- function(version = '19',
     canonical_transcript_file <- system.file(package = "locusviz", "extdata", "canonical_transcripts_grch37.tsv.gz")
   } else if (genome == 'hg38') {
     gtf_file <-
-      'ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/gencode.v34.annotation.gff3.gz'
+      'ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_35/gencode.v35.annotation.gff3.gz'
     # https://github.com/broadinstitute/gnomad-browser/blob/master/data/docs/gene_models.md#canonical-transcripts
-    canonical_transcript_file <- system.file(package = "locusviz", "extdata", "canonical_transcripts_grch38.tsv.gz")
+    canonical_transcript_file <- system.file(package = "locusviz", "extdata", "canonical_transcripts_grch38_v35.tsv.gz")
   }
 
 
@@ -77,6 +77,8 @@ gencode_txdb <- function(version = '19',
   gr <-
     GenomeInfoDb::keepSeqlevels(gr, chrs, pruning.mode = 'coarse')
 
+  # For GenomicFeatures >= 1.43.6
+  gr$transcript_id = gr$gene_name
   gr$Name = gr$gene_name
 
   txdb <-
@@ -105,8 +107,8 @@ get_tss_gene_body = function(txdb, chromosomes = paste0("chr", c(seq(22), "X")))
 }
 
 write_txdb_files = function(chromosomes = paste0('chr', c(seq(22), 'X'))) {
-  txdb_v34_hg38 = gencode_txdb(genome = 'hg38', chrs = chromosomes)
-  AnnotationDbi::saveDb(txdb_v34_hg38, "inst/extdata/txdb_v34_hg38.sqlite")
+  txdb_v35_hg38 = gencode_txdb(genome = 'hg38', chrs = chromosomes)
+  AnnotationDbi::saveDb(txdb_v35_hg38, "inst/extdata/txdb_v35_hg38.sqlite")
 
   txdb_v19_hg19 = gencode_txdb(genome = 'hg19', chrs = chromosomes)
   AnnotationDbi::saveDb(txdb_v19_hg19, "inst/extdata/txdb_v19_hg19.sqlite")

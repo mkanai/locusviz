@@ -16,7 +16,7 @@ load_txdb <- function(genome_build = c('hg19', 'hg38'),
         system.file(package = "locusviz", "extdata", "txdb_v19_hg19.sqlite")
       ),
       hg38 = AnnotationDbi::loadDb(
-        system.file(package = "locusviz", "extdata", "txdb_v34_hg38.sqlite")
+        system.file(package = "locusviz", "extdata", "txdb_v35_hg38.sqlite")
       )
     )
   }
