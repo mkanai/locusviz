@@ -87,7 +87,7 @@ plot_fm_panel = function(data,
         aes(x = position, y = pip, color = cs_id),
         size = point.size
       )),
-      # highlighted variants not in CS
+      # non-highlighted variants in CS
       geom_point(
         data = dplyr::filter(data, !is.na(cs_id) &
                                !position %in% highlight_pos),

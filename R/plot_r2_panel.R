@@ -24,8 +24,10 @@ plot_r2_panel = function(data,
                          ybreaks = seq(0, 1, by = 0.2),
                          point.size = 1.5,
                          point.size2 = 3,
+                         legend.ncol = 2,
                          nlog10p_threshold = 1,
                          ggtheme = get_default_theme(),
+                         background.layers = NULL,
                          rasterize = FALSE,
                          rasterize.dpi = 300) {
   if (any(stringr::str_detect(colnames(data), "^gnomad_lead_r2_"))) {
@@ -57,6 +59,10 @@ plot_r2_panel = function(data,
                                breaks = ybreaks,
                                expand = expansion(c(0, 0.1), 0))
 
+  if (!is.null(background.layers) & !is.list(background.layers)) {
+    background.layers = list(background.layers)
+  }
+
   rasterize_f = ifelse(rasterize, function(p) {
     ggrastr::rasterize(p, dpi = rasterize.dpi)
   }, function(p) {
@@ -64,8 +70,9 @@ plot_r2_panel = function(data,
   })
 
   p_r2 = ggplot() +
+    background.layers +
     highlight_vline(highlight_pos) +
-    geom_point(
+    rasterize_f(geom_point(
       data = dplyr::filter(
         data,
         nlog10p > nlog10p_threshold &
@@ -78,7 +85,7 @@ plot_r2_panel = function(data,
         alpha = !is.na(cs_id)
       ),
       size = point.size
-    ) +
+    )) +
     geom_point(
       data = dplyr::filter(data, lead_variant |
                              position %in% highlight_pos),
@@ -98,7 +105,7 @@ plot_r2_panel = function(data,
       na.translate = FALSE
     ) +
     ggtheme +
-    guides(color = guide_legend(ncol = 2))
+    guides(color = guide_legend(ncol = legend.ncol))
 
   return(p_r2)
 }

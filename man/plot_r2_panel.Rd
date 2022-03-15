@@ -12,8 +12,10 @@ plot_r2_panel(
   ybreaks = seq(0, 1, by = 0.2),
   point.size = 1.5,
   point.size2 = 3,
+  legend.ncol = 2,
   nlog10p_threshold = 1,
   ggtheme = get_default_theme(),
+  background.layers = NULL,
   rasterize = FALSE,
   rasterize.dpi = 300
 )
