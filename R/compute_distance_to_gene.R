@@ -23,7 +23,15 @@ compute_distance_to_gene = function(txdb,
 
   if (type == "GB") {
     gr = GenomicRanges::GRanges(seqnames = chromosome, ranges = IRanges(start, end))
-    gr.txdb <- biovizBase::crunch(txdb, which = gr)
+    gr.txdb <- tryCatch({
+      biovizBase::crunch(txdb, which = gr)
+    }, error = function(msg) {
+      message(msg)
+      return(GenomicRanges::GRanges())
+    })
+    if (length(gr.txdb) == 0) {
+      return(tibble::tibble(gene = NA, method = "Distance", score = NA))
+    }
 
     df <- GenomicRanges::as.data.frame(gr.txdb) %>%
       dplyr::filter(type == "exon") %>%

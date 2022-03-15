@@ -14,20 +14,30 @@ plot_gene_score_panel = function(chromosome,
   genome_build = match.arg(genome_build)
   distance.type = match.arg(distance.type)
 
-  txdb = load_txdb(genome_build, txdb)
-
-  gr = GenomicRanges::GRanges(seqnames = chromosome, ranges = IRanges(start, end))
-  gr.txdb <- biovizBase::crunch(txdb, which = gr)
-  plotted.genes <- unique(gr.txdb$tx_name)
-
-  distance.df = or_missing(
-    append.distance,
-    compute_distance_to_gene(txdb, chromosome, start, end, highlight_pos, distance.type)
-  )
-
   if (is.null(method.levels)) {
     method.levels = c(or_missing(append.distance, "Distance"),
                       unique(as.character(gene_score.data$method)))
+  }
+
+  txdb = load_txdb(genome_build, txdb)
+
+  gr = GenomicRanges::GRanges(seqnames = chromosome, ranges = IRanges(start, end))
+  gr.txdb <- tryCatch({
+    biovizBase::crunch(txdb, which = gr)
+  }, error = function(msg) {
+    message(msg)
+    return(GenomicRanges::GRanges())
+  })
+  if (length(gr.txdb) == 0) {
+    plotted.genes <- c("NA")
+    distance.df <- NULL
+    gene_score.data = tibble::tibble(gene = plotted.genes, score = NA, method = method.levels)
+  } else {
+    plotted.genes <- unique(gr.txdb$tx_name)
+    distance.df = or_missing(
+      append.distance,
+      compute_distance_to_gene(txdb, chromosome, start, end, highlight_pos, distance.type)
+    )
   }
 
   gene_score.data =
@@ -52,6 +62,7 @@ plot_gene_score_panel = function(chromosome,
       legend.position = "none"
     ) +
     scale_size_area(max_size = area.max_size) +
+    scale_y_discrete(drop=FALSE) +
     or_missing(!is.null(colors), scale_color_manual(values = colors))
 
   return(p_gene_score)
