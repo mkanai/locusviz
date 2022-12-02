@@ -9,7 +9,7 @@ Description: This package provides various functions to visualize GWAS data for
 License: MIT
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1
 Depends:
   dplyr,
   ggplot2,

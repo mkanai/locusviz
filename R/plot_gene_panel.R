@@ -19,6 +19,7 @@ plot_gene_panel = function(chromosome,
                            genome_build = c('hg19', 'hg38'),
                            txdb = NULL,
                            highlight_pos = NULL,
+                           highlight_pos_y = 1,
                            gene_col = BuenColors::jdb_palette("calma_azules")[6],
                            fontsize = 8,
                            point.size = 2,
@@ -36,6 +37,9 @@ plot_gene_panel = function(chromosome,
   }
   if (!is.null(background.layers) & !is.list(background.layers)) {
     background.layers = list(background.layers)
+  }
+  if (length(highlight_pos) == 0) {
+    highlight_pos = NULL
   }
 
   gr = GenomicRanges::GRanges(seqnames = chromosome, ranges = IRanges(start, end))
@@ -61,7 +65,7 @@ plot_gene_panel = function(chromosome,
     or_missing(
       !is.null(highlight_pos),
       geom_point(
-        aes(x = highlight_pos, y = 1),
+        aes(x = highlight_pos, y = highlight_pos_y),
         shape = 18,
         color = BuenColors::jdb_palette("solar_extra")[1],
         size = point.size

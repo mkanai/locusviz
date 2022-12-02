@@ -15,6 +15,7 @@ plot_fm_panel(
   point.size = 1.5,
   point.size2 = 3,
   ggtheme = get_default_theme(),
+  background.layers = NULL,
   rasterize = FALSE,
   rasterize.dpi = 300,
   cs.colors = NULL,

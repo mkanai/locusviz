@@ -26,6 +26,7 @@ plot_fm_panel = function(data,
                          point.size = 1.5,
                          point.size2 = 3,
                          ggtheme = get_default_theme(),
+                         background.layers = NULL,
                          rasterize = FALSE,
                          rasterize.dpi = 300,
                          cs.colors = NULL,
@@ -71,6 +72,10 @@ plot_fm_panel = function(data,
     }
   }
 
+  if (!is.null(background.layers) & !is.list(background.layers)) {
+    background.layers = list(background.layers)
+  }
+
   rasterize_f = ifelse(rasterize, function(p) {
     ggrastr::rasterize(p, dpi = rasterize.dpi)
   }, function(p) {
@@ -78,6 +83,7 @@ plot_fm_panel = function(data,
   })
 
   p_fm = ggplot() +
+    background.layers +
     highlight_vline(highlight_pos) +
     or_missing(!all(is.na(data$pip)), list(
       # non-CS variants

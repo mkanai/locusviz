@@ -11,6 +11,7 @@ plot_gene_panel(
   genome_build = c("hg19", "hg38"),
   txdb = NULL,
   highlight_pos = NULL,
+  highlight_pos_y = 1,
   gene_col = BuenColors::jdb_palette("calma_azules")[6],
   fontsize = 8,
   point.size = 2,

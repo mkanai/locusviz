@@ -14,6 +14,8 @@
 preprocess <-
   function(data,
            lead_variant = NULL,
+           chromosome_col = "chromosome",
+           position_col = "position",
            variant_col = "variant",
            beta_col = "beta",
            se_col = "se",
@@ -21,15 +23,17 @@ preprocess <-
            pip_col = "pip",
            cs_id_col = "cs_id",
            r2_col = "r2") {
-    required_cols = c(variant_col, beta_col, se_col, pip_col, cs_id_col)
+    required_cols = c(chromosome_col, position_col, variant_col, beta_col, se_col, pip_col, cs_id_col)
     if (!all(required_cols %in% colnames(data))) {
       stop(paste("Required columns are missing:", paste(
-        setdiff(required_cols, colnames(df)), sep = ","
+        setdiff(required_cols, colnames(data)), collapse = ","
       )))
     }
 
     data = dplyr::rename(
       data,
+      chromosome = chromosome_col,
+      position = position_col,
       variant = variant_col,
       beta = beta_col,
       se = se_col,

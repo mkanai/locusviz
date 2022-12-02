@@ -7,6 +7,8 @@
 preprocess(
   data,
   lead_variant = NULL,
+  chromosome_col = "chromosome",
+  position_col = "position",
   variant_col = "variant",
   beta_col = "beta",
   se_col = "se",
