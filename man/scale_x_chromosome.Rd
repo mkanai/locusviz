@@ -2,16 +2,34 @@
 % Please edit documentation in R/scale_x_chromosome.R
 \name{scale_x_chromosome}
 \alias{scale_x_chromosome}
-\title{Title}
+\title{Create chromosome x-axis scale for genome-wide plots}
 \usage{
 scale_x_chromosome(reference_genome, ...)
 }
 \arguments{
-\item{...}{}
+\item{reference_genome}{Character string specifying the reference genome:
+"GRCh37" or "GRCh38"}
+
+\item{...}{Additional arguments passed to scale_x_continuous}
 }
 \value{
-
+A ggplot2 scale_x_continuous object with chromosome-specific breaks
+  and labels
 }
 \description{
-Title
+This function creates a ggplot2 x-axis scale for genome-wide plots with
+chromosome labels at the center of each chromosome and minor breaks at
+chromosome boundaries.
+}
+\examples{
+# Create a Manhattan plot with chromosome scale
+ggplot(gwas_data, aes(x = global_position, y = -log10(p))) +
+  geom_point() +
+  scale_x_chromosome("GRCh38")
+
+# With custom expansion
+ggplot(gwas_data, aes(x = global_position, y = -log10(p))) +
+  geom_point() +
+  scale_x_chromosome("GRCh37", expand = expansion(mult = 0.02))
+
 }

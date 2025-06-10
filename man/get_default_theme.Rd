@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_default_theme.R
 \name{get_default_theme}
 \alias{get_default_theme}
-\title{Title}
+\title{Get default ggplot2 theme for locusviz plots}
 \usage{
 get_default_theme(
   fontsize = 8,
@@ -17,11 +17,40 @@ get_default_theme(
 )
 }
 \arguments{
-\item{hide.ytitle}{}
+\item{fontsize}{Numeric font size for all text elements (default: 8)}
+
+\item{legend.position}{Numeric vector for legend position (default: c(1,1) = top-right)}
+
+\item{legend.justification}{Numeric vector for legend justification (default: c(1,1))}
+
+\item{hide.xlab}{Logical whether to hide both x-axis text and title (default: FALSE)}
+
+\item{hide.ylab}{Logical whether to hide both y-axis text and title (default: FALSE)}
+
+\item{hide.xtext}{Logical whether to hide x-axis text (default: FALSE)}
+
+\item{hide.ytext}{Logical whether to hide y-axis text (default: FALSE)}
+
+\item{hide.xtitle}{Logical whether to hide x-axis title (default: FALSE)}
+
+\item{hide.ytitle}{Logical whether to hide y-axis title (default: FALSE)}
 }
 \value{
-
+A ggplot2 theme object
 }
 \description{
-Title
+This function returns a consistent ggplot2 theme used across all locusviz
+plotting functions. It provides a clean, publication-ready appearance with
+customizable options for hiding axis elements.
+}
+\examples{
+# Get default theme
+theme_default <- get_default_theme()
+
+# Hide x-axis elements for stacked plots
+theme_no_x <- get_default_theme(hide.xlab = TRUE)
+
+# Larger font size
+theme_large <- get_default_theme(fontsize = 12)
+
 }

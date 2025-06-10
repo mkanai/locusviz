@@ -2,16 +2,34 @@
 % Please edit documentation in R/get_global_position.R
 \name{get_global_position}
 \alias{get_global_position}
-\title{Title}
+\title{Convert chromosomal position to global genomic position}
 \usage{
 get_global_position(chromosome, position, reference_genome)
 }
 \arguments{
-\item{reference_genome}{}
+\item{chromosome}{Character vector of chromosome identifiers}
+
+\item{position}{Numeric vector of positions within chromosomes}
+
+\item{reference_genome}{Character string specifying the reference genome:
+"GRCh37" or "GRCh38"}
 }
 \value{
-
+Numeric vector of global genomic positions
 }
 \description{
-Title
+This function converts chromosome-specific positions to global genomic positions
+for genome-wide plotting by adding the cumulative chromosome offset.
+}
+\examples{
+# Convert single position
+global_pos <- get_global_position("chr2", 1000000, "GRCh38")
+
+# Convert multiple positions
+global_pos <- get_global_position(
+  c("chr1", "chr2", "chr3"),
+  c(1000000, 2000000, 3000000),
+  "GRCh37"
+)
+
 }

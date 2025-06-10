@@ -2,16 +2,27 @@
 % Please edit documentation in R/highlight_vline.R
 \name{highlight_vline}
 \alias{highlight_vline}
-\title{Title}
+\title{Add vertical highlight lines to a plot}
 \usage{
 highlight_vline(highlight_pos, size = 0.5)
 }
 \arguments{
-\item{size}{}
+\item{highlight_pos}{Numeric vector of x-axis positions to highlight.
+If NULL, no lines are added}
+
+\item{size}{Numeric line width (default: 0.5)}
 }
 \value{
-
+A geom_vline ggplot2 layer or NULL if highlight_pos is NULL
 }
 \description{
-Title
+This function adds dashed vertical lines at specified positions to highlight
+variants or regions of interest across multiple plot panels.
+}
+\examples{
+# Add highlight lines to a plot
+ggplot(data, aes(x = position, y = value)) +
+  geom_point() +
+  highlight_vline(c(100000, 200000))
+
 }

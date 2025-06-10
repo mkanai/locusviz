@@ -2,16 +2,32 @@
 % Please edit documentation in R/load_txdb.R
 \name{load_txdb}
 \alias{load_txdb}
-\title{Title}
+\title{Load transcript database for gene annotations}
 \usage{
 load_txdb(genome_build = c("hg19", "hg38"), txdb = NULL)
 }
 \arguments{
-\item{txdb}{}
+\item{genome_build}{Character string specifying the genome build: "hg19" or "hg38"}
+
+\item{txdb}{Optional TxDb object. If provided, this will be returned instead
+of loading the default TxDb for the genome build}
 }
 \value{
-
+A TxDb object containing transcript annotations for the specified
+  genome build
 }
 \description{
-Title
+This function loads a pre-built TxDb object for the specified genome build,
+or returns a user-provided TxDb object.
+}
+\examples{
+\dontrun{
+# Load default TxDb for hg38
+txdb <- load_txdb("hg38")
+
+# Use custom TxDb
+custom_txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
+txdb <- load_txdb("hg38", txdb = custom_txdb)
+}
+
 }

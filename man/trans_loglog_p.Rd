@@ -2,16 +2,32 @@
 % Please edit documentation in R/trans_loglog_p.R
 \name{trans_loglog_p}
 \alias{trans_loglog_p}
-\title{Title}
+\title{Create log-log transformation for p-values}
 \usage{
 trans_loglog_p(loglog_p = 10)
 }
 \arguments{
-\item{loglog_p}{}
+\item{loglog_p}{Numeric threshold above which to apply log-log transformation
+(default: 10). Values below this threshold are unchanged, values above are
+log-transformed}
 }
 \value{
-
+A scales transformation object for use with ggplot2 scale functions
 }
 \description{
-Title
+This function creates a custom transformation for p-values that applies
+logarithmic scaling above a threshold to better visualize extreme p-values
+in Manhattan plots.
+}
+\examples{
+# Use in a Manhattan plot
+ggplot(gwas_data, aes(x = position, y = -log10(p))) +
+  geom_point() +
+  scale_y_continuous(trans = trans_loglog_p(10))
+
+# With higher threshold
+ggplot(gwas_data, aes(x = position, y = -log10(p))) +
+  geom_point() +
+  scale_y_continuous(trans = trans_loglog_p(20))
+
 }

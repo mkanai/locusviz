@@ -2,7 +2,7 @@
 % Please edit documentation in R/annotate_hrange.R
 \name{annotate_hrange}
 \alias{annotate_hrange}
-\title{Title}
+\title{Annotate horizontal range on a plot}
 \usage{
 annotate_hrange(
   xmin,
@@ -16,11 +16,35 @@ annotate_hrange(
 )
 }
 \arguments{
-\item{text.size}{}
+\item{xmin}{Numeric value for the start position of the range}
+
+\item{xmax}{Numeric value for the end position of the range}
+
+\item{y}{Numeric value for the y-axis position of the annotation}
+
+\item{scale}{Numeric scaling factor for partial ranges (default: 1).
+Values < 1 create a broken line to indicate continuation}
+
+\item{label}{Character string to display at the center of the range (optional)}
+
+\item{tip_length}{Numeric length of vertical tips at range endpoints (default: 0)}
+
+\item{line.size}{Numeric width of the annotation lines (default: 0.2)}
+
+\item{text.size}{Numeric size for the label text (default: 2)}
 }
 \value{
-
+A list of ggplot2 layers (geom_segment and optionally geom_text)
 }
 \description{
-Title
+This function adds a horizontal line annotation with optional tips and label
+to indicate a range or distance on a plot.
+}
+\examples{
+\dontrun{
+ggplot(data, aes(x, y)) +
+  geom_point() +
+  annotate_hrange(xmin = 100, xmax = 200, y = 5, label = "100 kb")
+}
+
 }

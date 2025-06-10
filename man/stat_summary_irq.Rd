@@ -2,13 +2,27 @@
 % Please edit documentation in R/stat_summary_irq.R
 \name{stat_summary_irq}
 \alias{stat_summary_irq}
-\title{stat_summary_irq}
+\title{Summary statistic with interquartile range}
 \usage{
 stat_summary_irq(color = "black", size = 0.1)
 }
 \arguments{
-\item{color}{}
+\item{color}{Character string specifying the color for the summary statistics
+(default: "black")}
+
+\item{size}{Numeric size for the lines (default: 0.1)}
+}
+\value{
+A ggplot2 stat_summary layer
 }
 \description{
-stat_summary_irq
+This function creates a ggplot2 stat_summary layer that displays the median
+with error bars showing the interquartile range (25th to 75th percentile).
+}
+\examples{
+# Add IQR summary to a plot
+ggplot(data, aes(x = group, y = value)) +
+  geom_point() +
+  stat_summary_irq(color = "red")
+
 }

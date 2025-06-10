@@ -2,7 +2,7 @@
 % Please edit documentation in R/compute_distance_to_gene.R
 \name{compute_distance_to_gene}
 \alias{compute_distance_to_gene}
-\title{Title}
+\title{Compute distance from reference position to genes}
 \usage{
 compute_distance_to_gene(
   txdb,
@@ -14,11 +14,34 @@ compute_distance_to_gene(
 )
 }
 \arguments{
-\item{type}{}
+\item{txdb}{A TxDb object containing transcript annotations}
+
+\item{chromosome}{Character string specifying the chromosome (e.g., "chr1" or "1")}
+
+\item{start}{Numeric start position of the genomic region}
+
+\item{end}{Numeric end position of the genomic region}
+
+\item{ref_position}{Numeric reference position from which to calculate distances}
+
+\item{type}{Character string specifying distance type: "GB" (gene body) or
+"TSS" (transcription start site)}
 }
 \value{
-
+A data frame with columns: gene (factor ordered by position),
+  method ("Distance" or "Distance_TSS"), and score (numeric distance)
 }
 \description{
-Title
+This function calculates the distance from a reference genomic position to
+genes in a specified region, using either gene body or TSS distance metrics.
+}
+\examples{
+\dontrun{
+# Calculate distance to gene bodies
+distances <- compute_distance_to_gene(
+  txdb, "chr1", 1000000, 2000000, 1500000,
+  type = "GB"
+)
+}
+
 }

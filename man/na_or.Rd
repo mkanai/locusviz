@@ -2,16 +2,16 @@
 % Please edit documentation in R/utils.R
 \name{na_or}
 \alias{na_or}
-\title{Title}
+\title{NA-safe OR operation}
 \usage{
 na_or(...)
 }
 \arguments{
-\item{...}{}
+\item{...}{Logical vectors to combine with OR}
 }
 \value{
-
+Logical vector with NA-safe OR operation
 }
 \description{
-Title
+Performs logical OR operation treating NA values as FALSE.
 }

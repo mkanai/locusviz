@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_locuszoom.R
 \name{plot_locuszoom}
 \alias{plot_locuszoom}
-\title{Title}
+\title{Create LocusZoom-style visualization}
 \usage{
 plot_locuszoom(
   data,
@@ -33,11 +33,79 @@ plot_locuszoom(
 )
 }
 \arguments{
-\item{plot.gene_score}{}
+\item{data}{Data frame containing variant information with required columns:
+chromosome, position, and additional columns depending on enabled panels}
+
+\item{highlight_pos}{Numeric position to highlight across all panels}
+
+\item{window}{Numeric window size around lead variant (ignored if xlim is provided)}
+
+\item{xlim}{Numeric vector of length 2 specifying the x-axis limits (start, end)}
+
+\item{manhattan.args}{List of additional arguments passed to plot_manhattan_panel}
+
+\item{manhattan.title}{Character string for Manhattan panel title}
+
+\item{manhattan.breaks}{Y-axis breaks for Manhattan panel (default: automatic)}
+
+\item{manhattan.loglog_p}{Logical whether to use log-log p-value transformation}
+
+\item{nlog10p_threshold}{Numeric threshold for -log10(p) values}
+
+\item{fm.args}{List of additional arguments passed to plot_fm_panel}
+
+\item{fm.ylim}{Numeric vector for fine-mapping panel y-axis limits (default: c(0,1))}
+
+\item{fm.breaks}{Numeric vector for fine-mapping panel y-axis breaks}
+
+\item{fm.legend_title}{Character string for fine-mapping legend title}
+
+\item{r2.args}{List of additional arguments passed to plot_r2_panel}
+
+\item{gene.args}{List of additional arguments passed to plot_gene_panel}
+
+\item{gene_score.args}{List of additional arguments passed to plot_gene_score_panel}
+
+\item{plot.manhattan}{Logical whether to include Manhattan panel (default: TRUE)}
+
+\item{plot.fm}{Logical whether to include fine-mapping panel (default: TRUE)}
+
+\item{plot.r2}{Logical whether to include r2/LD panel (default: FALSE)}
+
+\item{plot.gene}{Logical whether to include gene track panel (default: TRUE)}
+
+\item{plot.gene_score}{Logical whether to include gene score panel (default: FALSE)}
+
+\item{fontsize}{Numeric font size for all panels (default: 8)}
+
+\item{patchwork}{Logical whether to combine panels using patchwork (default: TRUE)}
+
+\item{rasterize}{Logical whether to rasterize scatter plots (default: FALSE)}
+
+\item{rasterize.dpi}{Numeric DPI for rasterization (default: 300)}
 }
 \value{
-
+Either a combined patchwork plot (if patchwork=TRUE) or a list of
+  individual ggplot2 objects for each panel
 }
 \description{
-Title
+This is the main function for creating LocusZoom-style plots. It combines multiple
+panels (Manhattan plot, fine-mapping, r2/LD, gene track, and gene scores) into a
+single comprehensive visualization of a genomic locus.
+}
+\examples{
+\dontrun{
+# Basic LocusZoom plot
+plot_locuszoom(gwas_data, highlight_pos = 123456789)
+
+# Custom configuration with specific panels
+plot_locuszoom(
+  gwas_data,
+  window = 500000,
+  plot.r2 = TRUE,
+  plot.gene_score = TRUE,
+  manhattan.title = "GWAS results for trait X"
+)
+}
+
 }

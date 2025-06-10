@@ -2,16 +2,27 @@
 % Please edit documentation in R/utils.R
 \name{variant_str}
 \alias{variant_str}
-\title{Title}
+\title{Create variant string from components}
 \usage{
 variant_str(chromosome, position, ref, alt)
 }
 \arguments{
-\item{alt}{}
+\item{chromosome}{Character vector of chromosome identifiers}
+
+\item{position}{Numeric vector of positions}
+
+\item{ref}{Character vector of reference alleles}
+
+\item{alt}{Character vector of alternative alleles}
 }
 \value{
-
+Character vector of variant identifiers
 }
 \description{
-Title
+This function creates variant identifiers in the format
+"chromosome:position:ref:alt" from separate components.
+}
+\examples{
+variant_str("1", 1000, "A", "G")
+
 }

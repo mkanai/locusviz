@@ -2,16 +2,33 @@
 % Please edit documentation in R/liftover_variant.R
 \name{liftover_variant}
 \alias{liftover_variant}
-\title{Title}
+\title{Liftover variant positions between genome builds}
 \usage{
 liftover_variant(variant, genome_build = c("hg19", "hg38"))
 }
 \arguments{
-\item{genome_build}{}
+\item{variant}{Character vector of variant identifiers in the format
+"chromosome:position:ref:alt"}
+
+\item{genome_build}{Character string specifying the target genome build:
+"hg19" (lifts from hg38 to hg19) or "hg38" (lifts from hg19 to hg38)}
 }
 \value{
-
+A data frame with columns: variant (original), new_variant,
+  new_chromosome, new_position, new_ref, new_alt. Variants that fail to
+  lift over will have NA values in the new_* columns
 }
 \description{
-Title
+This function converts variant positions between hg19 and hg38 genome builds
+using UCSC chain files.
+}
+\examples{
+\dontrun{
+# Liftover from hg19 to hg38
+lifted <- liftover_variant(c("1:1000000:A:G", "2:2000000:C:T"), "hg38")
+
+# Liftover from hg38 to hg19
+lifted <- liftover_variant(c("chr1:1000000:A:G"), "hg19")
+}
+
 }

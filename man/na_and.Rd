@@ -2,16 +2,16 @@
 % Please edit documentation in R/utils.R
 \name{na_and}
 \alias{na_and}
-\title{Title}
+\title{NA-safe AND operation}
 \usage{
 na_and(...)
 }
 \arguments{
-\item{y}{}
+\item{...}{Logical vectors to combine with AND}
 }
 \value{
-
+Logical vector with NA-safe AND operation
 }
 \description{
-Title
+Performs logical AND operation treating NA values as FALSE.
 }

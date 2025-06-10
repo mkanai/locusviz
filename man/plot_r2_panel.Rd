@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_r2_panel.R
 \name{plot_r2_panel}
 \alias{plot_r2_panel}
-\title{Title}
+\title{Create r² (linkage disequilibrium) panel}
 \usage{
 plot_r2_panel(
   data,
@@ -21,11 +21,52 @@ plot_r2_panel(
 )
 }
 \arguments{
-\item{rasterize.dpi}{}
+\item{data}{Data frame containing variant data with columns: variant, position,
+nlog10p, lead_variant, cs_id, and gnomad_lead_r2_* or gnomad_lead_r_* columns}
+
+\item{highlight_pos}{Numeric vector of positions to highlight with larger diamonds}
+
+\item{xlim}{Numeric vector of length 2 specifying x-axis limits (start, end)}
+
+\item{ylim}{Numeric vector of length 2 specifying y-axis limits (default: c(0,1))}
+
+\item{ybreaks}{Numeric vector specifying y-axis break points}
+
+\item{point.size}{Numeric size for regular variant points (default: 1.5)}
+
+\item{point.size2}{Numeric size for highlighted variant points (default: 3)}
+
+\item{legend.ncol}{Number of columns for the legend (default: 2)}
+
+\item{nlog10p_threshold}{Numeric minimum -log10(p) value to display (default: 1)}
+
+\item{ggtheme}{ggplot2 theme object (default: get_default_theme())}
+
+\item{background.layers}{List of additional ggplot2 layers to add as background}
+
+\item{rasterize}{Logical whether to rasterize the scatter plot (default: FALSE)}
+
+\item{rasterize.dpi}{Numeric DPI for rasterization (default: 300)}
 }
 \value{
-
+A ggplot2 object showing the r² panel
 }
 \description{
-Title
+This function creates a panel showing linkage disequilibrium (r²) values between
+variants and a lead variant, stratified by population from gnomAD data.
+}
+\examples{
+\dontrun{
+# Basic r² plot
+plot_r2_panel(gwas_data)
+
+# With custom settings
+plot_r2_panel(
+  gwas_data,
+  highlight_pos = c(123456, 789012),
+  xlim = c(1000000, 2000000),
+  legend.ncol = 3
+)
+}
+
 }

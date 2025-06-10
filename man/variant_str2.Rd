@@ -2,16 +2,23 @@
 % Please edit documentation in R/utils.R
 \name{variant_str2}
 \alias{variant_str2}
-\title{Title}
+\title{Create variant string from locus and alleles}
 \usage{
 variant_str2(locus, alleles)
 }
 \arguments{
-\item{alleles}{}
+\item{locus}{Character vector of locus strings (chromosome:position)}
+
+\item{alleles}{Character vector of allele strings (may contain brackets/quotes)}
 }
 \value{
-
+Character vector of variant identifiers
 }
 \description{
-Title
+This function creates variant identifiers from locus (chromosome:position)
+and alleles string, handling various formatting.
+}
+\examples{
+variant_str2("1:1000", "[\"A\",\"G\"]")
+
 }

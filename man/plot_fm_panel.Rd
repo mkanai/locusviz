@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_fm_panel.R
 \name{plot_fm_panel}
 \alias{plot_fm_panel}
-\title{Title}
+\title{Create fine-mapping panel}
 \usage{
 plot_fm_panel(
   data,
@@ -23,11 +23,57 @@ plot_fm_panel(
 )
 }
 \arguments{
-\item{ggtheme}{}
+\item{data}{Data frame containing variant data with columns: position, pip,
+and optionally cs_id for credible set membership}
+
+\item{highlight_pos}{Numeric vector of positions to highlight with larger diamonds}
+
+\item{title}{Character string for plot title}
+
+\item{legend_title}{Character string for legend title (default: "95\% CS")}
+
+\item{xlim}{Numeric vector of length 2 specifying x-axis limits (start, end)}
+
+\item{ylim}{Numeric vector of length 2 specifying y-axis limits (default: c(0,1))}
+
+\item{ybreaks}{Numeric vector specifying y-axis break points}
+
+\item{point.size}{Numeric size for regular variant points (default: 1.5)}
+
+\item{point.size2}{Numeric size for highlighted variant points (default: 3)}
+
+\item{ggtheme}{ggplot2 theme object (default: get_default_theme())}
+
+\item{background.layers}{List of additional ggplot2 layers to add as background}
+
+\item{rasterize}{Logical whether to rasterize the scatter plot (default: FALSE)}
+
+\item{rasterize.dpi}{Numeric DPI for rasterization (default: 300)}
+
+\item{cs.colors}{Character vector of colors for credible sets}
+
+\item{relevel.cs_id}{Logical whether to relevel credible set IDs (default: TRUE)}
 }
 \value{
-
+A ggplot2 object showing the fine-mapping panel
 }
 \description{
-Title
+This function creates a panel showing fine-mapping posterior inclusion probabilities
+(PIPs) for variants in a genomic region, with optional credible set coloring.
+}
+\examples{
+\dontrun{
+# Basic fine-mapping plot
+plot_fm_panel(finemapping_data)
+
+# With custom settings
+plot_fm_panel(
+  finemapping_data,
+  highlight_pos = c(123456, 789012),
+  xlim = c(1000000, 2000000),
+  title = "Fine-mapping results",
+  cs.colors = c("red", "blue", "green")
+)
+}
+
 }

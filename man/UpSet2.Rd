@@ -22,8 +22,53 @@ UpSet2(
 )
 }
 \arguments{
-\item{...}{}
+\item{m}{A matrix or data frame where rows/columns represent sets and values
+indicate set membership (1) or not (0)}
+
+\item{set_on_rows}{Logical indicating if sets are on rows (default: TRUE) or columns}
+
+\item{comb_col}{Character color or vector of colors for combination markers}
+
+\item{pt_size}{Grid unit object specifying point size (default: unit(3, "mm"))}
+
+\item{lwd}{Numeric line width for connections (default: 2)}
+
+\item{bg_col}{Character color for background (default: "#F0F0F0")}
+
+\item{bg_pt_col}{Character color for background points (default: "#CCCCCC")}
+
+\item{set_order}{Character vector specifying order of sets}
+
+\item{comb_order}{Character vector specifying order of combinations}
+
+\item{top_annotation}{HeatmapAnnotation object for top annotation}
+
+\item{right_annotation}{HeatmapAnnotation object for right annotation}
+
+\item{row_names_side}{Character string: "left" or "right" for row name position}
+
+\item{remove_lines}{Logical whether to remove connecting lines (default: FALSE)}
+
+\item{...}{Additional arguments passed to ComplexHeatmap::UpSet}
+}
+\value{
+An UpSet plot object from ComplexHeatmap
 }
 \description{
-Modified UpSet plot
+This function creates an UpSet plot with enhanced visual customization options.
+UpSet plots are used to visualize intersections of multiple sets.
+}
+\examples{
+\dontrun{
+# Create sample data
+m <- matrix(c(1, 0, 1, 1, 0, 0, 1, 1, 0), nrow = 3)
+rownames(m) <- c("Set1", "Set2", "Set3")
+
+# Basic UpSet plot
+UpSet2(m)
+
+# Customized UpSet plot
+UpSet2(m, comb_col = "red", pt_size = unit(5, "mm"))
+}
+
 }

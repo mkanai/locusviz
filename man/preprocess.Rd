@@ -2,7 +2,7 @@
 % Please edit documentation in R/preprocess.R
 \name{preprocess}
 \alias{preprocess}
-\title{Title}
+\title{Preprocess GWAS data for visualization}
 \usage{
 preprocess(
   data,
@@ -19,11 +19,50 @@ preprocess(
 )
 }
 \arguments{
-\item{r2_col}{}
+\item{data}{Data frame containing GWAS summary statistics}
+
+\item{lead_variant}{Character string specifying the lead variant ID. If NULL,
+the variant with the highest -log10(p) value will be selected}
+
+\item{chromosome_col}{Name of the chromosome column (default: "chromosome")}
+
+\item{position_col}{Name of the position column (default: "position")}
+
+\item{variant_col}{Name of the variant ID column (default: "variant")}
+
+\item{beta_col}{Name of the beta/effect size column (default: "beta")}
+
+\item{se_col}{Name of the standard error column (default: "se")}
+
+\item{pvalue_col}{Name of the p-value column (default: "pvalue")}
+
+\item{pip_col}{Name of the PIP column for fine-mapping (default: "pip")}
+
+\item{cs_id_col}{Name of the credible set ID column (default: "cs_id")}
+
+\item{r2_col}{Name of the r² column (default: "r2")}
 }
 \value{
-
+A standardized data frame with columns: chromosome, position, variant,
+  beta, se, pip, cs_id, nlog10p, lead_variant, and optionally pvalue and r2
 }
 \description{
-Title
+This function preprocesses GWAS summary statistics data for use with locusviz
+plotting functions. It standardizes column names, calculates -log10(p) values,
+and identifies the lead variant.
+}
+\examples{
+\dontrun{
+# Basic preprocessing
+processed_data <- preprocess(gwas_data)
+
+# With custom column names
+processed_data <- preprocess(
+  gwas_data,
+  chromosome_col = "chr",
+  position_col = "pos",
+  lead_variant = "rs123456"
+)
+}
+
 }

@@ -2,16 +2,23 @@
 % Please edit documentation in R/utils.R
 \name{parse_variant}
 \alias{parse_variant}
-\title{Title}
+\title{Parse variant string into components}
 \usage{
 parse_variant(variant, sep = ":")
 }
 \arguments{
-\item{sep}{}
+\item{variant}{Character vector of variant identifiers}
+
+\item{sep}{Character separator used in variant string (default: ":")}
 }
 \value{
-
+A tibble with columns: chromosome, position (numeric), ref, alt
 }
 \description{
-Title
+This function parses variant identifiers in the format
+"chromosome:position:ref:alt" into separate columns.
+}
+\examples{
+parse_variant(c("1:1000:A:G", "2:2000:C:T"))
+
 }

@@ -1,24 +1,69 @@
-plot_lollipop = function(df,
-                         gene_symbol,
-                         point_colors,
-                         clinvar,
-                         point_shapes = cohort_shapes,
-                         trait_idx = NULL,
-                         gene_col = 'grey90',
-                         color_by_cohort = FALSE,
-                         plot.domains = TRUE,
-                         remove.unknown.domains = TRUE,
-                         omit_spacer = FALSE,
-                         extend.size = NULL,
-                         plot.extra.genes = FALSE,
-                         genome_build = c('hg19', 'hg38'),
-                         txdb = NULL) {
-  genome_build = match.arg(genome_build)
+#' Create lollipop plot for variant effects
+#'
+#' This function creates a lollipop plot showing variant effects on a gene,
+#' with positive and negative effects displayed above and below the gene track.
+#' It can also display Pfam domains and ClinVar annotations.
+#'
+#' @param df Data frame containing variant data with columns: position, pip,
+#'   susie.beta_posterior, trait, cohort, label
+#' @param gene_symbol Character string or vector of gene symbols to plot
+#' @param point_colors Named vector of colors for traits or cohorts
+#' @param clinvar Data frame containing ClinVar annotations
+#' @param point_shapes Named vector of shapes for cohorts (default: cohort_shapes)
+#' @param trait_idx Data frame mapping traits to indices (auto-generated if NULL)
+#' @param gene_col Color for gene track (default: 'grey90')
+#' @param color_by_cohort Logical whether to color by cohort instead of trait
+#' @param plot.domains Logical whether to plot Pfam domains (default: TRUE)
+#' @param remove.unknown.domains Logical whether to remove unknown domains (default: TRUE)
+#' @param omit_spacer Logical whether to omit empty panels (default: FALSE)
+#' @param extend.size Numeric or length-2 vector to extend plot region beyond gene
+#' @param plot.extra.genes Logical whether to plot additional genes in region
+#' @param genome_build Character string specifying genome build: 'hg19' or 'hg38'
+#' @param txdb Optional TxDb object. If NULL, will be loaded based on genome_build
+#'
+#' @return A patchwork combined plot object showing the lollipop visualization
+#'
+#' @import ggplot2
+#' @importFrom patchwork plot_layout plot_spacer guide_area
+#' @importFrom ggbio geom_alignment
+#' @importFrom GenomicFeatures transcripts
+#' @importFrom GenomicRanges GRanges
+#' @importFrom IRanges IRanges
+#' @importFrom dplyr filter mutate group_by ungroup arrange select distinct pull
+#' @importFrom tidyr nest unnest
+#' @importFrom purrr map map_dfr
+#' @importFrom stringr str_remove str_split_fixed
+#' @importFrom BuenColors pretty_plot jdb_palette
+#' @importFrom cowplot theme_nothing
+#'
+#' @examples
+#' \dontrun{
+#' # Create lollipop plot for a gene
+#' plot_lollipop(variant_df, "BRCA2", trait_colors, clinvar_data)
+#' }
+#'
+#' @export
+plot_lollipop <- function(df,
+                          gene_symbol,
+                          point_colors,
+                          clinvar,
+                          point_shapes = cohort_shapes,
+                          trait_idx = NULL,
+                          gene_col = "grey90",
+                          color_by_cohort = FALSE,
+                          plot.domains = TRUE,
+                          remove.unknown.domains = TRUE,
+                          omit_spacer = FALSE,
+                          extend.size = NULL,
+                          plot.extra.genes = FALSE,
+                          genome_build = c("hg19", "hg38"),
+                          txdb = NULL) {
+  genome_build <- match.arg(genome_build)
   if (is.null(txdb)) {
-    txdb = load_txdb(genome_build)
+    txdb <- load_txdb(genome_build)
   }
 
-  my_theme =
+  my_theme <-
     BuenColors::pretty_plot(fontsize = 8) +
     theme(
       axis.title.x = element_blank(),
@@ -32,48 +77,52 @@ plot_lollipop = function(df,
       legend.key.size = unit(0.3, "cm"),
       panel.border = element_blank(),
       plot.margin = margin(0, 0, 0, 0),
-      plot.tag = element_text(face = 'bold'),
+      plot.tag = element_text(face = "bold"),
       plot.tag.position = c(0, 1)
     )
 
   gr <-
-    range(subset(
-      GenomicFeatures::transcripts(txdb),
-      tx_name %in% gene_symbol
-    ),
-    ignore.strand = TRUE)
-  chrom = stringr::str_remove(seqnames(gr), "^chr")
-  start = start(gr)
-  end = end(gr)
+    range(
+      subset(
+        GenomicFeatures::transcripts(txdb),
+        tx_name %in% gene_symbol
+      ),
+      ignore.strand = TRUE
+    )
+  chrom <- stringr::str_remove(seqnames(gr), "^chr")
+  start <- start(gr)
+  end <- end(gr)
   if (!is.null(extend.size)) {
     if (length(extend.size) == 1) {
-      extend.size = rep(extend.size, 2)
+      extend.size <- rep(extend.size, 2)
     }
-    start = start - extend.size[1]
-    end = end + extend.size[2]
+    start <- start - extend.size[1]
+    end <- end + extend.size[2]
     if (plot.extra.genes) {
-      gr <- GRanges(seqnames = paste0("chr", chrom),
-                    ranges = IRanges(start, end))
+      gr <- GRanges(
+        seqnames = paste0("chr", chrom),
+        ranges = IRanges(start, end)
+      )
     }
   }
   print(c(start, end))
 
-  assign_trait_idx = function(df) {
-    trait_idx = dplyr::select(df, trait) %>%
+  assign_trait_idx <- function(df) {
+    trait_idx <- dplyr::select(df, trait) %>%
       dplyr::distinct() %>%
       dplyr::arrange(trait) %>%
       dplyr::mutate(idx = 1:n()) %>%
       as.data.frame()
-    rownames(trait_idx) = trait_idx$trait
+    rownames(trait_idx) <- trait_idx$trait
 
     return(trait_idx)
   }
 
   if (is.null(trait_idx)) {
-    trait_idx = assign_trait_idx(df)
+    trait_idx <- assign_trait_idx(df)
   }
 
-  df = dplyr::mutate(df, signed_pip = sign(susie.beta_posterior) * pip) %>%
+  df <- dplyr::mutate(df, signed_pip = sign(susie.beta_posterior) * pip) %>%
     dplyr::filter(position >= start & position <= end) %>%
     dplyr::mutate(idx = trait_idx[trait, "idx"]) %>%
     dplyr::group_by(sign(susie.beta_posterior)) %>%
@@ -82,56 +131,60 @@ plot_lollipop = function(df,
     dplyr::ungroup()
 
   if (color_by_cohort) {
-    s_color = scale_color_manual(values = point_colors, na.value = "grey20")
-    s_shape = scale_shape_manual(values = point_shapes)
+    s_color <- scale_color_manual(values = point_colors, na.value = "grey20")
+    s_shape <- scale_shape_manual(values = point_shapes)
   } else {
-    s_color = scale_color_manual(values = point_colors, na.value = "grey20")
-    s_shape = scale_shape_manual(values = point_shapes)
+    s_color <- scale_color_manual(values = point_colors, na.value = "grey20")
+    s_shape <- scale_shape_manual(values = point_shapes)
   }
 
-  plot_pip = function(df,
-                      sign,
-                      xscale,
-                      label.y = 1.1,
-                      ymax = 1.8) {
+  plot_pip <- function(df,
+                       sign,
+                       xscale,
+                       label.y = 1.1,
+                       ymax = 1.8) {
     if (sign > 0) {
-      df = df %>%
+      df <- df %>%
         dplyr::filter(susie.beta_posterior > 0)
-      yinf = -Inf
-      ylim = c(0, ymax)
-      my_scale_y = scale_y_continuous(breaks = seq(0, 1, by = 0.2))
-      hjust = 0
-      p_theme = my_theme +
+      yinf <- -Inf
+      ylim <- c(0, ymax)
+      my_scale_y <- scale_y_continuous(breaks = seq(0, 1, by = 0.2))
+      hjust <- 0
+      p_theme <- my_theme +
         theme(
           axis.line.y = element_line(),
           legend.position = "none"
         )
     } else {
-      df = df %>%
+      df <- df %>%
         dplyr::filter(susie.beta_posterior < 0)
-      yinf = Inf
-      ylim = c(-ymax, 0)
-      label.y = -label.y
-      my_scale_y = scale_y_continuous(breaks = -seq(0, 1, by = 0.2),
-                                      labels = sprintf("%.1f", seq(0, 1, by = 0.2)))
-      hjust = 1
-      p_theme = my_theme +
-        theme(axis.line.y = element_line(),
-              legend.position = "none")
+      yinf <- Inf
+      ylim <- c(-ymax, 0)
+      label.y <- -label.y
+      my_scale_y <- scale_y_continuous(
+        breaks = -seq(0, 1, by = 0.2),
+        labels = sprintf("%.1f", seq(0, 1, by = 0.2))
+      )
+      hjust <- 1
+      p_theme <- my_theme +
+        theme(
+          axis.line.y = element_line(),
+          legend.position = "none"
+        )
     }
 
     if (nrow(df) == 0) {
       return(plot_spacer())
     }
 
-    df = dplyr::arrange(df, position) %>%
+    df <- dplyr::arrange(df, position) %>%
       dplyr::mutate(position2 = jitter_labels(position, xscale = xscale))
-    v.pos = dplyr::pull(df, position) %>%
+    v.pos <- dplyr::pull(df, position) %>%
       unique()
 
-    label.path =
+    label.path <-
       dplyr::select(df, cohort, trait, variant, position, position2, signed_pip) %>%
-      tidyr::nest(-cohort,-trait,-variant) %>%
+      tidyr::nest(-cohort, -trait, -variant) %>%
       dplyr::mutate(data = purrr::map(data, function(data) {
         tibble::tibble(
           x = c(data$position, data$position2, data$position2),
@@ -141,11 +194,13 @@ plot_lollipop = function(df,
       tidyr::unnest(data)
 
     if (color_by_cohort) {
-      g_point = geom_point(aes(position2, signed_pip, col = cohort, shape = cohort),
-                           size = 4)
+      g_point <- geom_point(aes(position2, signed_pip, col = cohort, shape = cohort),
+        size = 4
+      )
     } else {
-      g_point = geom_point(aes(position2, signed_pip, col = trait, shape = cohort),
-                           size = 4)
+      g_point <- geom_point(aes(position2, signed_pip, col = trait, shape = cohort),
+        size = 4
+      )
     }
 
     df %>%
@@ -158,7 +213,7 @@ plot_lollipop = function(df,
         ),
         data = label.path,
         size = 0.2,
-        color = 'grey50'
+        color = "grey50"
       ) +
       geom_segment(
         aes(
@@ -169,13 +224,14 @@ plot_lollipop = function(df,
         ),
         data = df %>% filter(!is.na(label)),
         size = 0.2,
-        color = 'grey50',
-        linetype = 'dotted'
+        color = "grey50",
+        linetype = "dotted"
       ) +
       g_point +
       geom_text(aes(position2, signed_pip, label = idx),
-                size = 2,
-                color = "white") +
+        size = 2,
+        color = "white"
+      ) +
       geom_text(
         aes(x = position2, y = label.y, label = label),
         data = df %>% filter(!is.na(label)),
@@ -189,15 +245,23 @@ plot_lollipop = function(df,
       s_color +
       s_shape +
       labs(x = "Position", y = "PIP") +
-      coord_cartesian(xlim = xscale,
-                      ylim = ylim,
-                      clip = 'off')
+      coord_cartesian(
+        xlim = xscale,
+        ylim = ylim,
+        clip = "off"
+      )
   }
 
-  gof_pos = df %>% dplyr::filter(susie.beta_posterior > 0) %>% .$position %>% unique()
-  lof_pos = df %>% dplyr::filter(susie.beta_posterior < 0) %>% .$position %>% unique()
+  gof_pos <- df %>%
+    dplyr::filter(susie.beta_posterior > 0) %>%
+    .$position %>%
+    unique()
+  lof_pos <- df %>%
+    dplyr::filter(susie.beta_posterior < 0) %>%
+    .$position %>%
+    unique()
 
-  pfam.domains = purrr::map_dfr(gene_symbol, function(x) {
+  pfam.domains <- purrr::map_dfr(gene_symbol, function(x) {
     get_pfam_domains(
       x,
       remove.unknown.domains = remove.unknown.domains,
@@ -206,26 +270,26 @@ plot_lollipop = function(df,
     )
   })
 
-  clinvar.snv = clinvar %>%
-    filter(
+  clinvar.snv <- clinvar %>%
+    dplyr::filter(
       GeneSymbol %in% gene_symbol &
         ClinicalSignificance %in% c("Pathogenic", "Likely pathogenic")
     ) %>%
-    filter(Type == "single nucleotide variant") %>%
-    mutate(
+    dplyr::filter(Type == "single nucleotide variant") %>%
+    dplyr::mutate(
       parse_variant(locus),
       gof_overlap = position %in% gof_pos,
       lof_overlap = position %in% lof_pos
     )
   print(clinvar.snv)
 
-  clinvar.sv = clinvar %>%
-    filter(
+  clinvar.sv <- clinvar %>%
+    dplyr::filter(
       GeneSymbol %in% gene_symbol &
         ClinicalSignificance %in% c("Pathogenic", "Likely pathogenic")
     ) %>%
     # filter(Type != "single nucleotide variant") %>%
-    mutate(
+    dplyr::mutate(
       position = as.numeric(stringr::str_split_fixed(locus, ":", 2)[, 2]),
       start = as.numeric(stringr::str_split_fixed(interval, ":|-|\\)", 4)[, 2]),
       end = as.numeric(stringr::str_split_fixed(interval, ":|-|\\)", 4)[, 3]),
@@ -235,7 +299,7 @@ plot_lollipop = function(df,
     )
   print(clinvar.sv)
 
-  g_domains = or_missing(nrow(pfam.domains) > 0, geom_rect(
+  g_domains <- or_missing(nrow(pfam.domains) > 0, geom_rect(
     aes(
       xmin = start,
       xmax = end,
@@ -246,8 +310,8 @@ plot_lollipop = function(df,
     data = pfam.domains
   ))
   # g_snv = or_missing(nrow(clinvar.snv) > 0, geom_point(aes(x = position, y = 1), data = clinvar.snv %>% filter(!gof_overlap | !lof_overlap), shape = 18, color = "grey50", size = 3))
-  g_snv = NULL
-  g_sv = or_missing(
+  g_snv <- NULL
+  g_sv <- or_missing(
     nrow(clinvar.sv) > 0,
     geom_segment(
       aes(
@@ -256,12 +320,12 @@ plot_lollipop = function(df,
         y = 0.95,
         yend = 1.05
       ),
-      data = clinvar.sv %>% filter(!large_sv),
+      data = clinvar.sv %>% dplyr::filter(!large_sv),
       color = "grey50",
       size = 0.3
     )
   )
-  g_large_deletion = or_missing(
+  g_large_deletion <- or_missing(
     any(clinvar.sv$large_sv),
     geom_segment(
       aes(
@@ -270,16 +334,16 @@ plot_lollipop = function(df,
         y = 1.05,
         yend = 1.05
       ),
-      data = clinvar.sv %>% filter(large_sv),
+      data = clinvar.sv %>% dplyr::filter(large_sv),
       color = "grey50",
       size = 0.3
     )
-  )# BuenColors::jdb_palette("brewer_red")[5]))
+  ) # BuenColors::jdb_palette("brewer_red")[5]))
   # g_gof_overlap = or_missing(any(clinvar.snv$gof_overlap), geom_point(aes(x = position, y = 1), data = clinvar.snv %>% filter(gof_overlap), shape = 18, color = "grey20", size = 3))
   # g_lof_overlap = or_missing(any(clinvar.snv$lof_overlap), geom_point(aes(x = position, y = 1), data = clinvar.snv %>% filter(lof_overlap), shape = 18, color = "grey20", size = 3))
-  g_gof_overlap = or_missing(
+  g_gof_overlap <- or_missing(
     any(clinvar.snv$gof_overlap |
-          clinvar.snv$lof_overlap),
+      clinvar.snv$lof_overlap),
     geom_segment(
       aes(
         x = start,
@@ -287,54 +351,62 @@ plot_lollipop = function(df,
         y = 0.95,
         yend = 1.05
       ),
-      data = clinvar.sv %>% filter(gof_overlap |
-                                     lof_overlap),
+      data = clinvar.sv %>% dplyr::filter(gof_overlap |
+        lof_overlap),
       color = "grey20",
       size = 0.3
     )
   )
-  g_lof_overlap = NULL
-  g_gof = or_missing(length(gof_pos) > 0,
-                     geom_point(
-                       aes(x = gof_pos, y = 1.11),
-                       shape = 18,
-                       color = ifelse(gof_pos %in% clinvar.sv$position, "grey20", "grey50"),
-                       #BuenColors::jdb_palette("solar_extra")[1],
-                       size = 3
-                     ))
-  g_gof_path = or_missing(length(gof_pos) > 0,
-                          geom_path(
-                            aes(x, y, group = i),
-                            data = data.frame(
-                              x = rep(gof_pos, each = 2),
-                              y = rep(c(1.1, Inf), length(gof_pos)),
-                              i = rep(1:length(gof_pos), each = 2)
-                            ),
-                            size = 0.2,
-                            color = 'grey50'
-                          ))
-  g_lof = or_missing(length(lof_pos) > 0,
-                     geom_point(
-                       aes(x = lof_pos, y = 0.89),
-                       shape = 18,
-                       color = ifelse(lof_pos %in% clinvar.sv$position, "grey20", "grey50"),
-                       #BuenColors::jdb_palette("solar_extra")[9],
-                       size = 3
-                     ))
-  g_lof_path = or_missing(length(lof_pos) > 0,
-                          geom_path(
-                            aes(x, y, group = i),
-                            data = data.frame(
-                              x = rep(lof_pos, each = 2),
-                              y = rep(c(0.9,-Inf), length(lof_pos)),
-                              i = rep(1:length(lof_pos), each = 2)
-                            ),
-                            size = 0.2,
-                            color = 'grey50'
-                          ))
+  g_lof_overlap <- NULL
+  g_gof <- or_missing(
+    length(gof_pos) > 0,
+    geom_point(
+      aes(x = gof_pos, y = 1.11),
+      shape = 18,
+      color = ifelse(gof_pos %in% clinvar.sv$position, "grey20", "grey50"),
+      # BuenColors::jdb_palette("solar_extra")[1],
+      size = 3
+    )
+  )
+  g_gof_path <- or_missing(
+    length(gof_pos) > 0,
+    geom_path(
+      aes(x, y, group = i),
+      data = data.frame(
+        x = rep(gof_pos, each = 2),
+        y = rep(c(1.1, Inf), length(gof_pos)),
+        i = rep(1:length(gof_pos), each = 2)
+      ),
+      size = 0.2,
+      color = "grey50"
+    )
+  )
+  g_lof <- or_missing(
+    length(lof_pos) > 0,
+    geom_point(
+      aes(x = lof_pos, y = 0.89),
+      shape = 18,
+      color = ifelse(lof_pos %in% clinvar.sv$position, "grey20", "grey50"),
+      # BuenColors::jdb_palette("solar_extra")[9],
+      size = 3
+    )
+  )
+  g_lof_path <- or_missing(
+    length(lof_pos) > 0,
+    geom_path(
+      aes(x, y, group = i),
+      data = data.frame(
+        x = rep(lof_pos, each = 2),
+        y = rep(c(0.9, -Inf), length(lof_pos)),
+        i = rep(1:length(lof_pos), each = 2)
+      ),
+      size = 0.2,
+      color = "grey50"
+    )
+  )
 
-  plot.gene.label = plot.extra.genes | (length(gene_symbol) > 1)
-  p_gene = ggplot() +
+  plot.gene.label <- plot.extra.genes | (length(gene_symbol) > 1)
+  p_gene <- ggplot() +
     ggbio::geom_alignment(
       txdb,
       which = gr,
@@ -345,23 +417,29 @@ plot_lollipop = function(df,
       label.size = 2,
       subset.tx_name = locusviz::or_missing(!plot.extra.genes, gene_symbol)
     ) +
-    locusviz::or_missing(!plot.gene.label,
-                         geom_text(
-                           aes(x = start, y = 1, label = gene_symbol),
-                           hjust = 1,
-                           nudge_x = -500,
-                           size = 2
-                         )) +
+    locusviz::or_missing(
+      !plot.gene.label,
+      geom_text(
+        aes(x = start, y = 1, label = gene_symbol),
+        hjust = 1,
+        nudge_x = -500,
+        size = 2
+      )
+    ) +
     g_domains +
     g_large_deletion +
     # SV
     g_sv +
     # SNV
-    g_snv + g_gof_overlap + g_lof_overlap +
+    g_snv +
+    g_gof_overlap +
+    g_lof_overlap +
     # GoF
-    g_gof_path + g_gof +
+    g_gof_path +
+    g_gof +
     # LoF
-    g_lof_path + g_lof +
+    g_lof_path +
+    g_lof +
     my_theme +
     theme(
       panel.border = element_blank(),
@@ -372,37 +450,40 @@ plot_lollipop = function(df,
       legend.position = "bottom",
       legend.box = "horizontal"
     ) +
-    scale_fill_manual(values = BuenColors::jdb_palette('corona')[16:30]) +
+    scale_fill_manual(values = BuenColors::jdb_palette("corona")[16:30]) +
     scale_y_discrete(expand = c(0, 0.1)) +
-    labs(x = "Position", fill = "Domain") + coord_cartesian(xlim = c(start, end), clip = "off")
+    labs(x = "Position", fill = "Domain") +
+    coord_cartesian(xlim = c(start, end), clip = "off")
 
-  p1 = plot_pip(df, sign = 1, xscale = c(start, end))
-  p2 = plot_pip(df, sign = -1, xscale = c(start, end))
+  p1 <- plot_pip(df, sign = 1, xscale = c(start, end))
+  p2 <- plot_pip(df, sign = -1, xscale = c(start, end))
 
 
-  cohort_idx = df %>% distinct(cohort) %>% mutate(idx = 1:n())
+  cohort_idx <- df %>%
+    dplyr::distinct(cohort) %>%
+    dplyr::mutate(idx = 1:n())
   if (color_by_cohort) {
-    g_legend_trait_point = geom_point(
+    g_legend_trait_point <- geom_point(
       aes(idx, 0),
       data = trait_idx,
       color = "grey50",
       shape = 18,
       size = 2.5
     )
-    g_legend_cohort_point = geom_point(
+    g_legend_cohort_point <- geom_point(
       aes(idx, 0, col = cohort),
       data = cohort_idx,
       shape = 18,
       size = 2.5
     )
   } else {
-    g_legend_trait_point = geom_point(
+    g_legend_trait_point <- geom_point(
       aes(idx, 0, col = trait),
       data = trait_idx,
       shape = 18,
       size = 2.5
     )
-    g_legend_cohort_point = geom_point(
+    g_legend_cohort_point <- geom_point(
       aes(idx, 0, shape = cohort),
       data = cohort_idx,
       color = "grey50",
@@ -410,10 +491,11 @@ plot_lollipop = function(df,
     )
   }
 
-  p_legend_trait = ggplot() +
+  p_legend_trait <- ggplot() +
     geom_text(aes(x = 0, y = 0, label = "Trait"),
-              size = 2,
-              hjust = 0) +
+      size = 2,
+      hjust = 0
+    ) +
     g_legend_trait_point +
     geom_text(
       aes(idx, 0, label = idx),
@@ -433,10 +515,11 @@ plot_lollipop = function(df,
     cowplot::theme_nothing() +
     coord_cartesian(xlim = c(0, max(max(trait_idx$idx), 12)))
 
-  p_legend_cohort = ggplot() +
+  p_legend_cohort <- ggplot() +
     geom_text(aes(x = 0, y = 0, label = "Cohort"),
-              size = 2,
-              hjust = 0) +
+      size = 2,
+      hjust = 0
+    ) +
     g_legend_cohort_point +
     geom_text(
       aes(idx, 0, label = cohort),
@@ -452,21 +535,21 @@ plot_lollipop = function(df,
 
   if (omit_spacer & "spacer" %in% c(class(p1), class(p2))) {
     if ("spacer" %in% class(p1)) {
-      p = p2
+      p <- p2
     } else if ("spacer" %in% class(p2)) {
-      p = p1
+      p <- p1
     }
-    plt_combined = p + p_gene + p_legend_trait + p_legend_cohort + guide_area() + plot_layout(
+    plt_combined <- p + p_gene + p_legend_trait + p_legend_cohort + guide_area() + plot_layout(
       nrow = 5,
-      guides = 'collect',
+      guides = "collect",
       heights = c(1, 0.25, 0.1, 0.1, 0.1)
     )
     return(plt_combined)
   }
 
-  plt_combined = p1 + p_gene + p2 + p_legend_trait + p_legend_cohort + guide_area() + plot_layout(
+  plt_combined <- p1 + p_gene + p2 + p_legend_trait + p_legend_cohort + guide_area() + plot_layout(
     nrow = 6,
-    guides = 'collect',
+    guides = "collect",
     heights = c(1, 0.25, 1, 0.1, 0.1, 0.1)
   )
   plt_combined

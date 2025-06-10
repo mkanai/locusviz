@@ -2,16 +2,19 @@
 % Please edit documentation in R/utils.R
 \name{or_missing}
 \alias{or_missing}
-\title{Title}
+\title{Conditionally return value or NULL}
 \usage{
 or_missing(predicate, value)
 }
 \arguments{
-\item{value}{}
+\item{predicate}{Logical value determining whether to return the value}
+
+\item{value}{Any R object to return if predicate is TRUE}
 }
 \value{
-
+The value if predicate is TRUE, otherwise NULL
 }
 \description{
-Title
+This utility function returns a value if a predicate is TRUE, otherwise NULL.
+Useful for conditionally including ggplot2 layers.
 }

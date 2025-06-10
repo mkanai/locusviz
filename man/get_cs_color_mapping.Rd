@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_cs_color_mapping.R
 \name{get_cs_color_mapping}
 \alias{get_cs_color_mapping}
-\title{Title}
+\title{Get color mapping for credible sets}
 \usage{
 get_cs_color_mapping(
   cs_ids,
@@ -11,11 +11,29 @@ get_cs_color_mapping(
 )
 }
 \arguments{
-\item{colors}{}
+\item{cs_ids}{Character or numeric vector of credible set IDs}
+
+\item{highlight_cs_ids}{Optional character or numeric vector of credible set IDs
+to prioritize in color assignment (will receive the first colors)}
+
+\item{colors}{Character vector of colors to use for mapping. Default uses
+BuenColors corona palette excluding certain values}
 }
 \value{
-
+A named character vector mapping credible set IDs to colors
 }
 \description{
-Title
+This function creates a color mapping for credible set IDs, with optional
+prioritization of highlighted credible sets.
+}
+\examples{
+# Basic usage
+cs_colors <- get_cs_color_mapping(c("CS1", "CS2", "CS3"))
+
+# With highlighted credible sets
+cs_colors <- get_cs_color_mapping(
+  c("CS1", "CS2", "CS3", "CS4"),
+  highlight_cs_ids = c("CS2", "CS4")
+)
+
 }

@@ -1,9 +1,22 @@
-#' Title
+#' Add vertical highlight lines to a plot
 #'
-#' @param highlight_pos
-#' @param size
+#' This function adds dashed vertical lines at specified positions to highlight
+#' variants or regions of interest across multiple plot panels.
 #'
-#' @return
+#' @param highlight_pos Numeric vector of x-axis positions to highlight.
+#'   If NULL, no lines are added
+#' @param size Numeric line width (default: 0.5)
+#'
+#' @return A geom_vline ggplot2 layer or NULL if highlight_pos is NULL
+#'
+#' @import ggplot2
+#'
+#' @examples
+#' # Add highlight lines to a plot
+#' ggplot(data, aes(x = position, y = value)) +
+#'   geom_point() +
+#'   highlight_vline(c(100000, 200000))
+#'
 #' @export
 highlight_vline <- function(highlight_pos, size = 0.5) {
   or_missing(

@@ -2,13 +2,26 @@
 % Please edit documentation in R/get_gnomad_colors.R
 \name{get_gnomad_colors}
 \alias{get_gnomad_colors}
-\title{Title}
+\title{Get gnomAD population colors}
 \usage{
 get_gnomad_colors()
 }
 \value{
-
+A named character vector mapping population codes to hex colors.
+  Includes colors for: afr (African), amr (Latino/American), eas (East Asian),
+  eur/nfe (European/Non-Finnish European), fin (Finnish), sas (South Asian),
+  asj (Ashkenazi Jewish), oth (Other), and additional subpopulations
 }
 \description{
-Title
+This function returns standardized colors for gnomAD populations based on
+the official gnomAD color scheme. Colors are provided for both lowercase
+and uppercase population codes.
+}
+\examples{
+# Get gnomAD colors
+pop_colors <- get_gnomad_colors()
+
+# Use in a plot
+scale_color_manual(values = get_gnomad_colors())
+
 }

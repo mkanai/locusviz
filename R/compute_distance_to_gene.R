@@ -1,34 +1,61 @@
-#' Title
+#' Compute distance from reference position to genes
 #'
-#' @param txdb
-#' @param chromosome
-#' @param start
-#' @param end
-#' @param ref_position
-#' @param type
+#' This function calculates the distance from a reference genomic position to
+#' genes in a specified region, using either gene body or TSS distance metrics.
 #'
-#' @return
+#' @param txdb A TxDb object containing transcript annotations
+#' @param chromosome Character string specifying the chromosome (e.g., "chr1" or "1")
+#' @param start Numeric start position of the genomic region
+#' @param end Numeric end position of the genomic region
+#' @param ref_position Numeric reference position from which to calculate distances
+#' @param type Character string specifying distance type: "GB" (gene body) or
+#'   "TSS" (transcription start site)
+#'
+#' @return A data frame with columns: gene (factor ordered by position),
+#'   method ("Distance" or "Distance_TSS"), and score (numeric distance)
+#'
+#' @importFrom GenomicRanges GRanges as.data.frame promoters
+#' @importFrom IRanges IRanges
+#' @importFrom biovizBase crunch
+#' @importFrom dplyr filter group_by summarize mutate select
+#' @importFrom tibble tibble
+#' @importFrom stringr str_starts str_c
+#' @importFrom forcats fct_reorder
+#' @importFrom plyranges filter
+#'
+#' @examples
+#' \dontrun{
+#' # Calculate distance to gene bodies
+#' distances <- compute_distance_to_gene(
+#'   txdb, "chr1", 1000000, 2000000, 1500000,
+#'   type = "GB"
+#' )
+#' }
+#'
 #' @export
-compute_distance_to_gene = function(txdb,
-                                    chromosome,
-                                    start,
-                                    end,
-                                    ref_position,
-                                    type = c("GB", "TSS")) {
-  type = match.arg(type)
+compute_distance_to_gene <- function(txdb,
+                                     chromosome,
+                                     start,
+                                     end,
+                                     ref_position,
+                                     type = c("GB", "TSS")) {
+  type <- match.arg(type)
 
   if (!stringr::str_starts(chromosome, "chr")) {
-    chromosome = stringr::str_c("chr", chromosome)
+    chromosome <- stringr::str_c("chr", chromosome)
   }
 
   if (type == "GB") {
-    gr = GenomicRanges::GRanges(seqnames = chromosome, ranges = IRanges(start, end))
-    gr.txdb <- tryCatch({
-      biovizBase::crunch(txdb, which = gr)
-    }, error = function(msg) {
-      message(msg)
-      return(GenomicRanges::GRanges())
-    })
+    gr <- GenomicRanges::GRanges(seqnames = chromosome, ranges = IRanges(start, end))
+    gr.txdb <- tryCatch(
+      {
+        biovizBase::crunch(txdb, which = gr)
+      },
+      error = function(msg) {
+        message(msg)
+        return(GenomicRanges::GRanges())
+      }
+    )
     if (length(gr.txdb) == 0) {
       return(tibble::tibble(gene = NA, method = "Distance", score = NA))
     }
@@ -49,7 +76,7 @@ compute_distance_to_gene = function(txdb,
       ) %>%
       dplyr::select(gene, method, score)
   } else if (type == "TSS") {
-    df =
+    df <-
       GenomicRanges::promoters(txdb, upstream = 0, downstream = 0) %>%
       plyranges::filter(seqnames == chromosome) %>%
       GenomicRanges::as.data.frame(row.names = "tx_id") %>%

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_manhattan_panel.R
 \name{plot_manhattan_panel}
 \alias{plot_manhattan_panel}
-\title{Title}
+\title{Create Manhattan plot panel}
 \usage{
 plot_manhattan_panel(
   data,
@@ -26,11 +26,63 @@ plot_manhattan_panel(
 )
 }
 \arguments{
-\item{lead_variant_col}{}
+\item{data}{Data frame containing variant data with columns: chromosome, position,
+nlog10p, lead_variant (logical), and optionally r2}
+
+\item{highlight_pos}{Numeric vector of positions to highlight with larger diamonds}
+
+\item{xlim}{Numeric vector of length 2 specifying x-axis limits (start, end)}
+
+\item{ylim}{Numeric vector of length 2 specifying y-axis limits}
+
+\item{ybreaks}{Numeric vector specifying y-axis break points}
+
+\item{nlog10p_threshold}{Numeric minimum -log10(p) value to display (default: 1)}
+
+\item{loglog_p}{Numeric threshold for log-log transformation (default: 10)}
+
+\item{plot.loglog_p}{Logical whether to use log-log p-value transformation}
+
+\item{point.size}{Numeric size for regular variant points (default: 1.5)}
+
+\item{point.size2}{Numeric size for highlighted/lead variant points (default: 3)}
+
+\item{line.size}{Numeric size for genome-wide significance line (default: 0.5)}
+
+\item{title}{Character string for plot title}
+
+\item{r2_cols}{Character vector of colors for r² bins}
+
+\item{lead_variant_col}{Character color for lead variant (default: "purple3")}
+
+\item{ggtheme}{ggplot2 theme object (default: get_default_theme())}
+
+\item{background.layers}{List of additional ggplot2 layers to add as background}
+
+\item{rasterize}{Logical whether to rasterize the scatter plot (default: FALSE)}
+
+\item{rasterize.dpi}{Numeric DPI for rasterization (default: 300)}
 }
 \value{
-
+A ggplot2 object showing the Manhattan plot panel
 }
 \description{
-Title
+This function creates a Manhattan plot panel showing GWAS p-values for a genomic region,
+with optional LD coloring relative to a lead variant.
+}
+\examples{
+\dontrun{
+# Basic Manhattan plot
+plot_manhattan_panel(gwas_data)
+
+# With custom settings
+plot_manhattan_panel(
+  gwas_data,
+  highlight_pos = c(123456, 789012),
+  xlim = c(1000000, 2000000),
+  plot.loglog_p = TRUE,
+  title = "GWAS results for trait X"
+)
+}
+
 }

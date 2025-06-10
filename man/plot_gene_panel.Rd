@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_gene_panel.R
 \name{plot_gene_panel}
 \alias{plot_gene_panel}
-\title{Title}
+\title{Create gene track panel}
 \usage{
 plot_gene_panel(
   chromosome,
@@ -22,11 +22,52 @@ plot_gene_panel(
 )
 }
 \arguments{
-\item{label.size}{}
+\item{chromosome}{Character string specifying the chromosome (e.g., "chr1" or "1")}
+
+\item{start}{Numeric start position of the genomic region}
+
+\item{end}{Numeric end position of the genomic region}
+
+\item{genome_build}{Character string specifying genome build: 'hg19' or 'hg38'}
+
+\item{txdb}{Optional TxDb object. If NULL, will be loaded based on genome_build}
+
+\item{highlight_pos}{Numeric vector of positions to highlight with diamonds}
+
+\item{highlight_pos_y}{Numeric y-position for highlight markers (default: 1)}
+
+\item{gene_col}{Color for gene tracks (default: blue from calma_azules palette)}
+
+\item{fontsize}{Numeric font size for plot text (default: 8)}
+
+\item{point.size}{Numeric size for highlight points (default: 2)}
+
+\item{label.size}{Numeric size for gene labels (default: 2)}
+
+\item{arrow.rate}{Numeric rate for directional arrows on genes (default: 0.015)}
+
+\item{length}{Unit object specifying arrow length (default: unit(0.1, "cm"))}
+
+\item{background.layers}{List of additional ggplot2 layers to add as background}
 }
 \value{
-
+A ggplot2 object showing the gene track panel
 }
 \description{
-Title
+This function creates a gene track panel showing gene annotations for a genomic region,
+with exons, introns, and gene direction indicated.
+}
+\examples{
+\dontrun{
+# Basic gene panel
+plot_gene_panel("chr1", 1000000, 2000000)
+
+# With highlighted positions
+plot_gene_panel(
+  "chr1", 1000000, 2000000,
+  highlight_pos = c(1234567, 1567890),
+  genome_build = "hg38"
+)
+}
+
 }

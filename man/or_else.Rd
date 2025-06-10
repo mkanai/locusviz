@@ -2,16 +2,19 @@
 % Please edit documentation in R/utils.R
 \name{or_else}
 \alias{or_else}
-\title{Title}
+\title{Return first non-NA value}
 \usage{
 or_else(a, b)
 }
 \arguments{
-\item{b}{}
+\item{a}{First value to check}
+
+\item{b}{Alternative value to return if a is NA}
 }
 \value{
-
+a if not NA, otherwise b
 }
 \description{
-Title
+This utility function returns the first argument if it's not NA, otherwise
+returns the second argument.
 }
