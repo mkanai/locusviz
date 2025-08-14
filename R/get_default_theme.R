@@ -38,7 +38,8 @@ get_default_theme <- function(fontsize = 8,
                               hide.xtext = FALSE,
                               hide.ytext = FALSE,
                               hide.xtitle = FALSE,
-                              hide.ytitle = FALSE) {
+                              hide.ytitle = FALSE,
+                              angle.xtext = NULL) {
   ggtheme <-
     BuenColors::pretty_plot(fontsize = fontsize) +
     BuenColors::L_border() +
@@ -72,6 +73,9 @@ get_default_theme <- function(fontsize = 8,
   }
   if (hide.ytitle) {
     ggtheme <- ggtheme + theme(axis.title.y = element_blank())
+  }
+  if (!hide.xtext & !is.null(angle.xtext)) {
+    ggtheme <- ggtheme + theme(axis.text.x = element_text(angle = angle.xtext, hjust = 1))
   }
 
   return(ggtheme)

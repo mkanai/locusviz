@@ -13,7 +13,8 @@ get_default_theme(
   hide.xtext = FALSE,
   hide.ytext = FALSE,
   hide.xtitle = FALSE,
-  hide.ytitle = FALSE
+  hide.ytitle = FALSE,
+  angle.xtext = NULL
 )
 }
 \arguments{
