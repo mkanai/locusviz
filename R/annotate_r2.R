@@ -34,17 +34,17 @@ annotate_r2 <- function(df,
     ))
   }
 
-  # Normalize all variants to chr:pos:ref:alt format
-  df$variant <- stringr::str_replace_all(df$variant, "_", ":")
+  # Create normalized variant column for internal use (preserve original)
+  df$variant_normalized <- stringr::str_replace_all(df$variant, "_", ":")
 
-  # Add chr prefix to variants if missing
-  needs_chr <- !stringr::str_starts(df$variant, "chr")
+  # Add chr prefix to normalized variants if missing
+  needs_chr <- !stringr::str_starts(df$variant_normalized, "chr")
   if (any(needs_chr)) {
     warning(sprintf(
       "%d variant(s) lack 'chr' prefix. Adding 'chr' prefix for GRCh38 format. Make sure your coordinates are in GRCh38.",
       sum(needs_chr)
     ))
-    df$variant[needs_chr] <- paste0("chr", df$variant[needs_chr])
+    df$variant_normalized[needs_chr] <- paste0("chr", df$variant_normalized[needs_chr])
   }
 
   reference_panel <- match.arg(reference_panel)
@@ -53,7 +53,7 @@ annotate_r2 <- function(df,
   if (is.null(lead_variant)) {
     # Check if lead_variant_col exists and has TRUE values
     if (lead_variant_col %in% names(df)) {
-      lead_variants <- df$variant[df[[lead_variant_col]] == TRUE]
+      lead_variants <- df$variant_normalized[df[[lead_variant_col]] == TRUE]
       if (length(lead_variants) == 0) {
         stop(sprintf("No lead variant found. Column '%s' exists but has no TRUE values.", lead_variant_col))
       } else if (length(lead_variants) > 1) {
@@ -95,7 +95,10 @@ annotate_r2 <- function(df,
     )
 
     ld_data <- jsonlite::fromJSON(api_url)$ld %>%
-      dplyr::select(variant = variation2, r2 = r2)
+      dplyr::transmute(
+        variant_normalized = paste0("chr", variation2),
+        r2 = r2
+      )
   } else if (reference_panel == "1000G") {
     # 1000 Genomes panel
     # Convert variant format for API: chr:pos:ref:alt to chr_pos_ref/alt
@@ -117,7 +120,7 @@ annotate_r2 <- function(df,
 
     ld_data <- as.data.frame(jsonlite::fromJSON(api_url)$data) %>%
       dplyr::transmute(
-        variant = stringr::str_replace_all(variant2, "[_/]", ":"),
+        variant_normalized = stringr::str_replace_all(variant2, "[_/]", ":"),
         r2 = correlation
       )
   }
@@ -127,5 +130,9 @@ annotate_r2 <- function(df,
     df <- dplyr::select(df, -r2)
   }
 
-  return(dplyr::left_join(df, ld_data, by = "variant"))
+  # Join LD data using normalized variant format
+  df <- dplyr::left_join(df, ld_data, by = "variant_normalized") %>%
+    dplyr::select(-variant_normalized)
+
+  return(df)
 }
