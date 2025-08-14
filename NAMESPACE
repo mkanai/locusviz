@@ -2,6 +2,7 @@
 
 export(UpSet2)
 export(annotate_hrange)
+export(annotate_r2)
 export(compute_distance_to_gene)
 export(compute_functional_enrichment)
 export(gencode_txdb)

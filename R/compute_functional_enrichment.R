@@ -1,4 +1,4 @@
-PIP_BIN_BREAKS = c(-Inf, 0.01, 0.1, 0.5, 0.9, 1.0)
+PIP_BIN_BREAKS <- c(-Inf, 0.01, 0.1, 0.5, 0.9, 1.0)
 
 #' Compute functional enrichment of variants by PIP bins
 #'
@@ -39,11 +39,11 @@ compute_functional_enrichment <-
            consequence_col = "consequence",
            maf_match = FALSE,
            seed = 12345) {
-    pip_levels = levels(cut(0, pip_bin_breaks))
-    pip_bottom_level = pip_levels[1]
-    pip_bottom_level2 = stringr::str_replace(pip_bottom_level, "^\\(-Inf", "[0")
-    pip_bottom_mapping = setNames(pip_bottom_level2, pip_bottom_level)
-    pip_top_level = pip_levels[length(pip_levels)]
+    pip_levels <- levels(cut(0, pip_bin_breaks))
+    pip_bottom_level <- pip_levels[1]
+    pip_bottom_level2 <- stringr::str_replace(pip_bottom_level, "^\\(-Inf", "[0")
+    pip_bottom_mapping <- setNames(pip_bottom_level2, pip_bottom_level)
+    pip_top_level <- pip_levels[length(pip_levels)]
 
     data <-
       dplyr::mutate(data, max_pip_bin = cut(max_pip, pip_bin_breaks)) %>%
@@ -51,21 +51,21 @@ compute_functional_enrichment <-
 
     if (maf_match) {
       set.seed(seed)
-      data = dplyr::mutate(data, max_maf_bin = Hmisc::cut2(max_maf, g = 5))
+      data <- dplyr::mutate(data, max_maf_bin = Hmisc::cut2(max_maf, g = 5))
 
-      data.k =
+      data.k <-
         dplyr::group_by(data, max_pip_bin, max_maf_bin) %>%
         dplyr::count() %>%
         dplyr::group_by(max_maf_bin) %>%
         dplyr::filter(length(max_pip_bin) == 2) %>%
         dplyr::summarize(k = max(n) %/% min(n)) %>%
         dplyr::ungroup()
-      k = min(data.k$k)
+      k <- min(data.k$k)
 
-      data = dplyr::group_split(data, max_maf_bin) %>%
-        purrr::map_dfr( ~ {
-          top = dplyr::filter(.x, max_pip_bin == !!pip_top_level)
-          bottom = dplyr::filter(.x, max_pip_bin == !!pip_bottom_level)
+      data <- dplyr::group_split(data, max_maf_bin) %>%
+        purrr::map_dfr(~ {
+          top <- dplyr::filter(.x, max_pip_bin == !!pip_top_level)
+          bottom <- dplyr::filter(.x, max_pip_bin == !!pip_bottom_level)
           if (nrow(bottom) < k * nrow(top)) {
             stop("Error")
           }
@@ -79,7 +79,7 @@ compute_functional_enrichment <-
       dplyr::mutate(total = sum(n), frac = n / total) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(
-        max_pip_bin = dplyr::recode_factor(max_pip_bin, !!!pip_bottom_mapping),!!consequence_col := ordered(!!rlang::sym(consequence_col), levels = .env$annot_levels)
+        max_pip_bin = dplyr::recode_factor(max_pip_bin, !!!pip_bottom_mapping), !!consequence_col := ordered(!!rlang::sym(consequence_col), levels = .env$annot_levels)
       ) %>%
       tidyr::drop_na(!!rlang::sym(consequence_col)) %>%
       dplyr::rename(consequence = !!consequence_col) %>%
@@ -91,7 +91,7 @@ compute_functional_enrichment <-
       dplyr::group_split(consequence) %>%
       purrr::map_dfr(function(data) {
         total_bottom <- stringr::str_c("total_", pip_bottom_level2)
-        n_bottom <-  stringr::str_c("n_", pip_bottom_level2)
+        n_bottom <- stringr::str_c("n_", pip_bottom_level2)
         total_top <- stringr::str_c("total_", pip_top_level)
         n_top <- stringr::str_c("n_", pip_top_level)
         null_result <- tibble::tibble(
