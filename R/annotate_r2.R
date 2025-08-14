@@ -1,14 +1,20 @@
 #' Annotate variants with linkage disequilibrium (r2) values
 #'
 #' @param df Data frame containing variant information with a 'variant' column
-#' @param lead_variant Lead variant in chr:pos:ref:alt or chr_pos_ref_alt format
+#' @param lead_variant Lead variant in chr:pos:ref:alt or chr_pos_ref_alt format.
+#'   If NULL, will attempt to use the variant marked as TRUE in the column
+#'   specified by \code{lead_variant_col}
+#' @param lead_variant_col Name of the logical column in df that indicates the
+#'   lead variant (default: "lead_variant"). Used only when \code{lead_variant}
+#'   is NULL
 #' @param reference_panel Reference panel to use ("1000G" or "sisu42")
 #' @param window Window size around lead variant in base pairs (default: 500000)
 #' @param population For 1000G panel, the population code (e.g., "EUR", "AFR", "EAS", "SAS", "AMR")
 #' @return Data frame with r2 values annotated
 #' @export
 annotate_r2 <- function(df,
-                        lead_variant,
+                        lead_variant = NULL,
+                        lead_variant_col = "lead_variant",
                         reference_panel = c("1000G", "sisu42"),
                         window = 500000,
                         population = "EUR") {
@@ -42,6 +48,25 @@ annotate_r2 <- function(df,
   }
 
   reference_panel <- match.arg(reference_panel)
+
+  # Determine lead variant
+  if (is.null(lead_variant)) {
+    # Check if lead_variant_col exists and has TRUE values
+    if (lead_variant_col %in% names(df)) {
+      lead_variants <- df$variant[df[[lead_variant_col]] == TRUE]
+      if (length(lead_variants) == 0) {
+        stop(sprintf("No lead variant found. Column '%s' exists but has no TRUE values.", lead_variant_col))
+      } else if (length(lead_variants) > 1) {
+        warning(sprintf(
+          "Multiple lead variants found in column '%s'. Using the first one: %s",
+          lead_variant_col, lead_variants[1]
+        ))
+      }
+      lead_variant <- lead_variants[1]
+    } else {
+      stop(sprintf("No lead variant specified and column '%s' not found in dataframe.", lead_variant_col))
+    }
+  }
 
   # Normalize lead variant format to chr:pos:ref:alt
   lead_variant <- stringr::str_replace_all(lead_variant, "_", ":")
