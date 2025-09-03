@@ -101,8 +101,8 @@ annotate_r2 <- function(df,
       )
   } else if (reference_panel == "1000G") {
     # 1000 Genomes panel
-    # Convert variant format for API: chr:pos:ref:alt to chr_pos_ref/alt
-    variant_api <- stringr::str_replace(lead_variant, ":([ATGC]+):([ATGC]+)$", "_\\1/\\2")
+    # Convert variant format for API: chr:pos:ref:alt to chr_pos_ref/alt (without chr prefix)
+    variant_api <- stringr::str_replace(stringr::str_remove(lead_variant, "^chr"), ":([ATGC]+):([ATGC]+)$", "_\\1/\\2")
 
     start <- max(1, pos - window)
     end <- pos + window
@@ -111,7 +111,7 @@ annotate_r2 <- function(df,
       "https://portaldev.sph.umich.edu/ld/genome_builds/GRCh38/references/1000G/populations/%s/variants?correlation=rsquare&variant=%s&chrom=%s&start=%d&stop=%d",
       population,
       variant_api,
-      chrom,
+      stringr::str_remove(chrom, "^chr"),
       start,
       end
     )
@@ -120,7 +120,7 @@ annotate_r2 <- function(df,
 
     ld_data <- as.data.frame(jsonlite::fromJSON(api_url)$data) %>%
       dplyr::transmute(
-        variant_normalized = stringr::str_replace_all(variant2, "[_/]", ":"),
+        variant_normalized = stringr::str_c("chr", stringr::str_replace_all(variant2, "[_/]", ":")),
         r2 = correlation
       )
   }

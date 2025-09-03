@@ -111,6 +111,7 @@ plot_gene_panel <- function(chromosome,
       axis.text = element_blank()
     ) +
     labs(x = sprintf("Chromosome %s", stringr::str_remove(chromosome, "^chr"))) +
+    scale_y_continuous(expand = expansion()) +
     coord_cartesian(xlim = c(start, end), clip = "off")
 
   return(p_gene)
