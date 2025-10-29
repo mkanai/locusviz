@@ -4,7 +4,7 @@
 \alias{boot_ci}
 \title{Bootstrap confidence interval}
 \usage{
-boot_ci(x, func, conf = 0.95, R = 1000, colname = "median")
+boot_ci(x, func, conf = 0.95, R = 1000, colname = "boot")
 }
 \arguments{
 \item{x}{Numeric vector of data values}
@@ -23,4 +23,3 @@ A tibble with three columns: the statistic value, lower CI bound, and upper CI b
 \description{
 Computes a bootstrap confidence interval for a summary statistic.
 }
-\keyword{internal}
