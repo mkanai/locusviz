@@ -1,7 +1,7 @@
 Package: locusviz
 Type: Package
 Title: Yet another locus visualization package in R.
-Version: 0.2.0
+Version: 0.3.0
 Author: Masahiro Kanai
 Maintainer: Masahiro Kanai <mkanai@broadinstitute.org>
 Description: This package provides various functions to visualize GWAS data for

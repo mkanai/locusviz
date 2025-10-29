@@ -36,12 +36,15 @@ remotes::install_github("mkanai/locusviz")
 - `preprocess()` - Standardize input data format
 - `liftover_variant()` - Convert between genome builds
 - `compute_distance_to_gene()` - Calculate variant-gene distances
+- `annotate_r2()` - LD annotation with auto-detection of lead variants
+- `compute_functional_enrichment()` - Functional enrichment computation
 
 ### Additional Features
 
 - `plot_lollipop()` - Variant effect visualization
-- `UpSet2()` - Set intersection plots
+- `plot_upset()` - Set intersection plots for credible sets and gene sets
 - Custom scales and transformations for extreme p-values
+- Statistical utilities (confidence intervals, bootstrap methods)
 
 ## Quick Start
 
@@ -88,18 +91,22 @@ plot_locuszoom(
 
 ### LD visualization
 
-- `gnomad_lead_r2_*`: LD r² values by population
+- `gnomad_lead_r2_*`: LD r2 values by population
 
 ## Dependencies
 
 The package relies on:
 
-- ggplot2 (core plotting)
+- ggplot2 (core plotting - automatically attached)
 - patchwork (panel composition)
 - GenomicRanges (genomic operations)
-- BuenColors (color palettes)
+- BuenColors (color palettes - from GitHub)
 - ComplexHeatmap (UpSet plots)
 - dplyr (data manipulation)
+- ggbio (genomic visualization)
+- ggrastr (plot rasterization)
+- ensembldb (gene annotations)
+- trackViewer (track visualization)
 
 ## License
 
