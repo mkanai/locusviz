@@ -135,3 +135,52 @@ variant_str2 <- function(locus, alleles) {
   alleles <- stringr::str_replace(stringr::str_remove_all(alleles, '[\\[\\]\\"]'), ",", ":")
   stringr::str_c(locus, alleles, sep = ":")
 }
+
+
+#' Generate distinct shades of a base color
+#'
+#' Creates a sequence of n colors with different lightness values based on
+#' a base color. The function intelligently adjusts lightness based on whether
+#' the base color is dark or light to ensure distinct, usable shades.
+#'
+#' @param base_color Character string specifying a color (any format accepted
+#'   by the shades package: hex, named colors, etc.)
+#' @param n Integer number of distinct shades to generate (default: 3)
+#'
+#' @return Character vector of n color values in hex format
+#'
+#' @details
+#' The function uses the Lab color space for perceptually uniform lightness
+#' adjustments. For dark colors (L < 50), it generates lighter shades.
+#' For light colors, it generates shades in both directions.
+#'
+#' @importFrom shades coords warp lightness
+#'
+#' @examples
+#' \dontrun{
+#' # Generate 3 shades of blue
+#' distinct_shades("blue", n = 3)
+#'
+#' # Generate 5 shades of a dark color
+#' distinct_shades("#1f77b4", n = 5)
+#' }
+#'
+#' @export
+#'
+distinct_shades <- function(base_color, n = 3) {
+  base_l <- shades::coords(shades::warp(base_color, space = "Lab"))[, "R"]
+
+  if (base_l < 50) {
+    # Dark color: go lighter
+    l_values <- seq(base_l, min(base_l + 40, 90), length.out = n)
+  } else {
+    # Light color: go both ways
+    l_values <- seq(
+      max(base_l - 30, 20),
+      min(base_l + 20, 90),
+      length.out = n
+    )
+  }
+
+  return(shades::lightness(base_color, l_values))
+}
