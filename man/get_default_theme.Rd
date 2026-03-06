@@ -35,6 +35,8 @@ get_default_theme(
 \item{hide.xtitle}{Logical whether to hide x-axis title (default: FALSE)}
 
 \item{hide.ytitle}{Logical whether to hide y-axis title (default: FALSE)}
+
+\item{angle.xtext}{Numeric angle for x-axis text rotation (default: NULL for no rotation)}
 }
 \value{
 A ggplot2 theme object

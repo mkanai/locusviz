@@ -62,7 +62,7 @@ plot_fm_panel <- function(data,
   g_fm_title <- or_missing(!is.null(title), ggtitle(title))
   scale_x <- or_missing(!is.null(xlim), coord_cartesian(xlim = xlim))
   scale_y <- scale_y_continuous(
-    lim = ylim,
+    limits = ylim,
     breaks = ybreaks,
     expand = expansion(c(0, 0.1), 0)
   )

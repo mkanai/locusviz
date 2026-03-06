@@ -13,7 +13,7 @@
 #' @importFrom data.table fread
 #' @importFrom GenomicRanges elementMetadata
 #' @importFrom GenomeInfoDb keepSeqlevels Seqinfo
-#' @importFrom GenomicFeatures makeTxDbFromGRanges
+#' @importFrom txdbmaker makeTxDbFromGRanges
 #' @importFrom dplyr filter
 #' @importFrom stringr str_split_fixed
 #'
@@ -87,7 +87,7 @@ gencode_txdb <- function(version = "19",
   # )
 
   message(paste(Sys.time(), "preparing metadata"))
-  metadata <- GenomicFeatures:::.prepareGFFMetadata(
+  metadata <- txdbmaker:::.prepareGFFMetadata(
     file = gtf_file,
     dataSource = NA,
     organism = "Homo sapiens",
@@ -97,9 +97,9 @@ gencode_txdb <- function(version = "19",
   )
 
   message(paste(Sys.time(), "building the txdb object"))
-  gr <- GenomicFeatures:::.tidy_seqinfo(
+  gr <- txdbmaker:::.tidy_seqinfo(
     gr = gencode_gtf,
-    circ_seqs = GenomicFeatures::DEFAULT_CIRC_SEQS,
+    circ_seqs = NULL,
     chrominfo = GenomeInfoDb::Seqinfo(genome = genome)
   )
 
@@ -112,7 +112,7 @@ gencode_txdb <- function(version = "19",
   gr$Name <- gr$gene_name
 
   txdb <-
-    GenomicFeatures::makeTxDbFromGRanges(gr, metadata = metadata)
+    txdbmaker::makeTxDbFromGRanges(gr, metadata = metadata)
   return(txdb)
 }
 

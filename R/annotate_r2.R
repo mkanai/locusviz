@@ -25,7 +25,7 @@ annotate_r2 <- function(df,
 
   # Spot check first 10 variants in df follow expected format
   variant_pattern <- "^(chr)?[0-9XY]+[_:]([0-9]+)[_:]([ATGC]+)[_:]([ATGC]+)$"
-  variants_to_check <- head(df$variant, 10)
+  variants_to_check <- utils::head(df$variant, 10)
   invalid_variants <- variants_to_check[!stringr::str_detect(variants_to_check, variant_pattern)]
   if (length(invalid_variants) > 0) {
     stop(sprintf(

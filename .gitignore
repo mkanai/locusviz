@@ -5,3 +5,11 @@
 .DS_Store
 CLAUDE.md
 .serena
+.claude
+
+# R CMD build / check intermediates
+*.tar.gz
+*.Rcheck/
+src/*.o
+src/*.so
+src/*.dll

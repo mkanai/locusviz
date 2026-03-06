@@ -82,7 +82,7 @@ plot_r2_panel <- function(data,
 
   scale_x <- or_missing(!is.null(xlim), coord_cartesian(xlim = xlim))
   scale_y <- scale_y_continuous(
-    lim = ylim,
+    limits = ylim,
     breaks = ybreaks,
     expand = expansion(c(0, 0.1), 0)
   )

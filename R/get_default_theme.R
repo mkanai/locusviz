@@ -13,6 +13,7 @@
 #' @param hide.ytext Logical whether to hide y-axis text (default: FALSE)
 #' @param hide.xtitle Logical whether to hide x-axis title (default: FALSE)
 #' @param hide.ytitle Logical whether to hide y-axis title (default: FALSE)
+#' @param angle.xtext Numeric angle for x-axis text rotation (default: NULL for no rotation)
 #'
 #' @return A ggplot2 theme object
 #'

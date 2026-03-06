@@ -73,7 +73,7 @@ preprocess <-
       dplyr::mutate(cs_id = factor(ifelse(is.na(cs_id) | cs_id < 0, NA, cs_id)))
 
     if (!("nlog10p" %in% colnames(data))) {
-      if ("pvalue" %in% colnames(data) & min(data$pvalue, na.rm = TRUE) > 0) {
+      if ("pvalue" %in% colnames(data) && any(!is.na(data$pvalue)) && min(data$pvalue, na.rm = TRUE) > 0) {
         data <- dplyr::mutate(data, nlog10p = -log10(pvalue))
       } else {
         data <-

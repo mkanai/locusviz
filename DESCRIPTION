@@ -1,12 +1,12 @@
 Package: locusviz
 Type: Package
-Title: Yet another locus visualization package in R.
+Title: Yet Another Locus Visualization Package in R
 Version: 0.3.0
 Author: Masahiro Kanai
 Maintainer: Masahiro Kanai <mkanai@broadinstitute.org>
 Description: This package provides various functions to visualize GWAS data for
   a locus of interest using ggplot2.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
@@ -15,18 +15,37 @@ Depends:
   ggplot2
 Imports:
   AnnotationDbi,
+  binom,
   biovizBase,
+  boot,
   BuenColors,
   ComplexHeatmap,
   cowplot,
+  data.table,
   dplyr,
   ensembldb,
+  epitools,
+  forcats,
+  GenomeInfoDb,
+  GenomicFeatures,
   GenomicRanges,
   ggbio,
   ggrastr,
+  IRanges,
+  magrittr,
   patchwork,
   plyranges,
+  purrr,
+  rlang,
+  rtracklayer,
+  scales,
+  shades,
   stringr,
-  trackViewer
+  tibble,
+  tidyr,
+  Hmisc,
+  jsonlite,
+  trackViewer,
+  txdbmaker
 Remotes:
   caleblareau/BuenColors

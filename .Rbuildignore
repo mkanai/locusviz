@@ -1,2 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.claude$
+^\.serena$
+^\.github$
+^CLAUDE\.md$
+^LICENSE\.md$

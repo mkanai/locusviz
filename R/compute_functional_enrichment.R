@@ -42,7 +42,7 @@ compute_functional_enrichment <-
     pip_levels <- levels(cut(0, pip_bin_breaks))
     pip_bottom_level <- pip_levels[1]
     pip_bottom_level2 <- stringr::str_replace(pip_bottom_level, "^\\(-Inf", "[0")
-    pip_bottom_mapping <- setNames(pip_bottom_level2, pip_bottom_level)
+    pip_bottom_mapping <- stats::setNames(pip_bottom_level2, pip_bottom_level)
     pip_top_level <- pip_levels[length(pip_levels)]
 
     data <-
