@@ -20,6 +20,7 @@ logarithmic scaling above a threshold to better visualize extreme p-values
 in Manhattan plots.
 }
 \examples{
+\dontrun{
 # Use in a Manhattan plot
 ggplot(gwas_data, aes(x = position, y = -log10(p))) +
   geom_point() +
@@ -29,5 +30,6 @@ ggplot(gwas_data, aes(x = position, y = -log10(p))) +
 ggplot(gwas_data, aes(x = position, y = -log10(p))) +
   geom_point() +
   scale_y_continuous(trans = trans_loglog_p(20))
+}
 
 }

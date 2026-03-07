@@ -21,7 +21,6 @@
 #' @importFrom tibble tibble
 #' @importFrom stringr str_starts str_c
 #' @importFrom forcats fct_reorder
-#' @importFrom plyranges filter
 #'
 #' @examples
 #' \dontrun{
@@ -78,7 +77,7 @@ compute_distance_to_gene <- function(txdb,
   } else if (type == "TSS") {
     df <-
       GenomicRanges::promoters(txdb, upstream = 0, downstream = 0) %>%
-      plyranges::filter(seqnames == chromosome) %>%
+      subset(seqnames == chromosome) %>%
       GenomicRanges::as.data.frame(row.names = "tx_id") %>%
       dplyr::filter(.env$start <= start & end <= .env$end) %>%
       dplyr::mutate(

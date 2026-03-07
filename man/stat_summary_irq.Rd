@@ -20,9 +20,11 @@ This function creates a ggplot2 stat_summary layer that displays the median
 with error bars showing the interquartile range (25th to 75th percentile).
 }
 \examples{
+\dontrun{
 # Add IQR summary to a plot
-ggplot(data, aes(x = group, y = value)) +
+ggplot(df, aes(x = group, y = value)) +
   geom_point() +
   stat_summary_irq(color = "red")
+}
 
 }

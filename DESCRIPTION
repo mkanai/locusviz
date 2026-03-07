@@ -34,7 +34,6 @@ Imports:
   IRanges,
   magrittr,
   patchwork,
-  plyranges,
   purrr,
   rlang,
   rtracklayer,

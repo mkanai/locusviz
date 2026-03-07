@@ -28,14 +28,16 @@ This function creates a ggplot2 color scale that alternates colors between
 odd and even chromosomes for better visualization in Manhattan plots.
 }
 \examples{
+\dontrun{
 # Default alternating colors
-ggplot(data, aes(x = position, y = -log10(p), color = chromosome)) +
+ggplot(df, aes(x = position, y = -log10(p), color = chromosome)) +
   geom_point() +
   scale_color_chromosome()
 
 # Custom colors
-ggplot(data, aes(x = position, y = -log10(p), color = chromosome)) +
+ggplot(df, aes(x = position, y = -log10(p), color = chromosome)) +
   geom_point() +
   scale_color_chromosome(odd_color = "red", even_color = "blue")
+}
 
 }

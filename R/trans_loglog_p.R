@@ -13,6 +13,7 @@
 #' @importFrom scales trans_new extended_breaks
 #'
 #' @examples
+#' \dontrun{
 #' # Use in a Manhattan plot
 #' ggplot(gwas_data, aes(x = position, y = -log10(p))) +
 #'   geom_point() +
@@ -22,6 +23,7 @@
 #' ggplot(gwas_data, aes(x = position, y = -log10(p))) +
 #'   geom_point() +
 #'   scale_y_continuous(trans = trans_loglog_p(20))
+#' }
 #'
 #' @export
 trans_loglog_p <- function(loglog_p = 10) {

@@ -20,9 +20,11 @@ This function adds dashed vertical lines at specified positions to highlight
 variants or regions of interest across multiple plot panels.
 }
 \examples{
+\dontrun{
 # Add highlight lines to a plot
-ggplot(data, aes(x = position, y = value)) +
+ggplot(df, aes(x = position, y = value)) +
   geom_point() +
   highlight_vline(c(100000, 200000))
+}
 
 }

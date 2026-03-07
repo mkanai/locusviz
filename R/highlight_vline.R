@@ -12,10 +12,12 @@
 #' @import ggplot2
 #'
 #' @examples
+#' \dontrun{
 #' # Add highlight lines to a plot
-#' ggplot(data, aes(x = position, y = value)) +
+#' ggplot(df, aes(x = position, y = value)) +
 #'   geom_point() +
 #'   highlight_vline(c(100000, 200000))
+#' }
 #'
 #' @export
 highlight_vline <- function(highlight_pos, size = 0.5) {

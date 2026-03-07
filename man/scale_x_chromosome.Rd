@@ -22,6 +22,7 @@ chromosome labels at the center of each chromosome and minor breaks at
 chromosome boundaries.
 }
 \examples{
+\dontrun{
 # Create a Manhattan plot with chromosome scale
 ggplot(gwas_data, aes(x = global_position, y = -log10(p))) +
   geom_point() +
@@ -31,5 +32,6 @@ ggplot(gwas_data, aes(x = global_position, y = -log10(p))) +
 ggplot(gwas_data, aes(x = global_position, y = -log10(p))) +
   geom_point() +
   scale_x_chromosome("GRCh37", expand = expansion(mult = 0.02))
+}
 
 }

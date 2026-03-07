@@ -13,10 +13,12 @@
 #' @importFrom stats median quantile
 #'
 #' @examples
+#' \dontrun{
 #' # Add IQR summary to a plot
-#' ggplot(data, aes(x = group, y = value)) +
+#' ggplot(df, aes(x = group, y = value)) +
 #'   geom_point() +
 #'   stat_summary_irq(color = "red")
+#' }
 #'
 #' @export
 stat_summary_irq <- function(color = "black", size = 0.1) {

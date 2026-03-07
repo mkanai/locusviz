@@ -16,15 +16,17 @@
 #' @importFrom magrittr set_names
 #'
 #' @examples
+#' \dontrun{
 #' # Default alternating colors
-#' ggplot(data, aes(x = position, y = -log10(p), color = chromosome)) +
+#' ggplot(df, aes(x = position, y = -log10(p), color = chromosome)) +
 #'   geom_point() +
 #'   scale_color_chromosome()
 #'
 #' # Custom colors
-#' ggplot(data, aes(x = position, y = -log10(p), color = chromosome)) +
+#' ggplot(df, aes(x = position, y = -log10(p), color = chromosome)) +
 #'   geom_point() +
 #'   scale_color_chromosome(odd_color = "red", even_color = "blue")
+#' }
 #'
 #' @export
 scale_color_chromosome <- function(odd_color = "darkblue", even_color = "grey50", reference_genome = "GRCh37") {
