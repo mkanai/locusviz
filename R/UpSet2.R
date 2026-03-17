@@ -22,7 +22,6 @@
 #' @return An UpSet plot object from ComplexHeatmap
 #'
 #' @import grid
-#' @importFrom ComplexHeatmap UpSet
 #'
 #' @examples
 #' \dontrun{
@@ -52,6 +51,13 @@ UpSet2 <- function(m,
                    row_names_side = "left",
                    remove_lines = FALSE,
                    ...) {
+  if (!requireNamespace("ComplexHeatmap", quietly = TRUE)) {
+    stop("Package 'ComplexHeatmap' is required for UpSet2(). ",
+      "Install it with: BiocManager::install('ComplexHeatmap')",
+      call. = FALSE
+    )
+  }
+
   m2 <- m
 
   class(m2) <- "matrix"

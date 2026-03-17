@@ -19,7 +19,6 @@ Imports:
   biovizBase,
   boot,
   BuenColors,
-  ComplexHeatmap,
   cowplot,
   data.table,
   dplyr,
@@ -43,7 +42,9 @@ Imports:
   tibble,
   tidyr,
   Hmisc,
-  jsonlite,
+  jsonlite
+Suggests:
+  ComplexHeatmap,
   trackViewer,
   txdbmaker
 Remotes:

@@ -13,7 +13,6 @@
 #' @importFrom data.table fread
 #' @importFrom GenomicRanges elementMetadata
 #' @importFrom GenomeInfoDb keepSeqlevels Seqinfo
-#' @importFrom txdbmaker makeTxDbFromGRanges
 #' @importFrom dplyr filter
 #' @importFrom stringr str_split_fixed
 #'
@@ -31,6 +30,13 @@
 gencode_txdb <- function(version = "19",
                          genome = c("hg19", "hg38"),
                          chrs = paste0("chr", seq_len(22))) {
+  if (!requireNamespace("txdbmaker", quietly = TRUE)) {
+    stop("Package 'txdbmaker' is required for gencode_txdb(). ",
+      "Install it with: BiocManager::install('txdbmaker')",
+      call. = FALSE
+    )
+  }
+
   genome <- match.arg(genome)
 
   ## Locate file

@@ -20,6 +20,13 @@
 #'
 #' @export
 jitter_labels <- function(label.pos, xscale) {
+  if (!requireNamespace("trackViewer", quietly = TRUE)) {
+    stop("Package 'trackViewer' is required for jitter_labels(). ",
+      "Install it with: BiocManager::install('trackViewer')",
+      call. = FALSE
+    )
+  }
+
   grid::pushViewport(grid::viewport(xscale = xscale))
   lineW <- as.numeric(grid::convertX(unit(1, "line"), "npc"))
   label.pos <- trackViewer:::jitterLables(label.pos, xscale, lineW)
