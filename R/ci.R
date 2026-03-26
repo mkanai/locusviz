@@ -93,3 +93,38 @@ binom_ci <- function(x, n, methods = "wilson", colname = "frac") {
   ) %>%
     magrittr::set_colnames(c(colname, paste0(colname, c("_lower", "_upper"))))
 }
+
+#' Spearman correlation confidence interval
+#'
+#' Computes Spearman's rank correlation with a confidence interval using
+#' Fisher's z-transform on the ranks (i.e., Pearson correlation of ranks).
+#'
+#' @param x Numeric vector
+#' @param y Numeric vector of the same length as \code{x}
+#' @param conf Confidence level (default: 0.95)
+#' @param colname Column name prefix for the output (default: "rho")
+#'
+#' @return A tibble with three columns: rho, rho_lower, rho_upper
+#'
+#' @importFrom stats cor.test
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' x <- rnorm(100)
+#' y <- x + rnorm(100, sd = 0.5)
+#' spearman_ci(x, y)
+#' }
+spearman_ci <- function(x, y, conf = 0.95, colname = "rho") {
+  complete <- stats::complete.cases(x, y)
+  ct <- stats::cor.test(rank(x[complete]), rank(y[complete]),
+    method = "pearson", conf.level = conf
+  )
+  tibble::tibble(
+    ct$estimate,
+    ct$conf.int[1],
+    ct$conf.int[2]
+  ) %>%
+    magrittr::set_colnames(c(colname, paste0(colname, c("_lower", "_upper"))))
+}
