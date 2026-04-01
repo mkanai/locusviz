@@ -85,13 +85,21 @@ mean_ci <- function(x, conf = 0.95, R = 1000, colname = "mean") {
 #' binom_ci(x = 30, n = 100)
 #' }
 binom_ci <- function(x, n, methods = "wilson", colname = "frac") {
+  cols <- c(colname, paste0(colname, c("_lower", "_upper")))
+  if (is.na(x)) {
+    return(
+      tibble::as_tibble(
+        stats::setNames(as.list(rep(NA_real_, 3)), cols)
+      )
+    )
+  }
   ci <- binom::binom.confint(x, n, methods = methods)
   tibble::tibble(
     x / n,
     ci$lower,
     ci$upper
   ) %>%
-    magrittr::set_colnames(c(colname, paste0(colname, c("_lower", "_upper"))))
+    magrittr::set_colnames(cols)
 }
 
 #' Spearman correlation confidence interval
