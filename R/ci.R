@@ -86,19 +86,17 @@ mean_ci <- function(x, conf = 0.95, R = 1000, colname = "mean") {
 #' }
 binom_ci <- function(x, n, methods = "wilson", colname = "frac") {
   cols <- c(colname, paste0(colname, c("_lower", "_upper")))
-  if (is.na(x)) {
-    return(
-      tibble::as_tibble(
-        stats::setNames(as.list(rep(NA_real_, 3)), cols)
-      )
-    )
+  na_mask <- is.na(x)
+  frac <- rep(NA_real_, length(x))
+  lower <- rep(NA_real_, length(x))
+  upper <- rep(NA_real_, length(x))
+  if (any(!na_mask)) {
+    ci <- binom::binom.confint(x[!na_mask], n[!na_mask], methods = methods)
+    frac[!na_mask] <- x[!na_mask] / n[!na_mask]
+    lower[!na_mask] <- ci$lower
+    upper[!na_mask] <- ci$upper
   }
-  ci <- binom::binom.confint(x, n, methods = methods)
-  tibble::tibble(
-    x / n,
-    ci$lower,
-    ci$upper
-  ) %>%
+  tibble::tibble(frac, lower, upper) %>%
     magrittr::set_colnames(cols)
 }
 
