@@ -110,7 +110,7 @@ binom_ci <- function(x, n, methods = "wilson", colname = "frac") {
 #' @param conf Confidence level (default: 0.95)
 #' @param colname Column name prefix for the output (default: "rho")
 #'
-#' @return A tibble with three columns: rho, rho_lower, rho_upper
+#' @return A tibble with four columns: rho, rho_lower, rho_upper, rho_p
 #'
 #' @importFrom stats cor.test
 #'
@@ -130,7 +130,8 @@ spearman_ci <- function(x, y, conf = 0.95, colname = "rho") {
   tibble::tibble(
     ct$estimate,
     ct$conf.int[1],
-    ct$conf.int[2]
+    ct$conf.int[2],
+    ct$p.value
   ) %>%
-    magrittr::set_colnames(c(colname, paste0(colname, c("_lower", "_upper"))))
+    magrittr::set_colnames(c(colname, paste0(colname, c("_lower", "_upper", "_p"))))
 }

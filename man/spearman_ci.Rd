@@ -16,7 +16,7 @@ spearman_ci(x, y, conf = 0.95, colname = "rho")
 \item{colname}{Column name prefix for the output (default: "rho")}
 }
 \value{
-A tibble with three columns: rho, rho_lower, rho_upper
+A tibble with four columns: rho, rho_lower, rho_upper, rho_p
 }
 \description{
 Computes Spearman's rank correlation with a confidence interval using
