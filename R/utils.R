@@ -182,5 +182,5 @@ distinct_shades <- function(base_color, n = 3) {
     )
   }
 
-  return(shades::lightness(base_color, l_values))
+  return(as.character(shades::lightness(base_color, l_values)))
 }
