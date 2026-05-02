@@ -63,7 +63,7 @@ plot_upset <- function(df,
     names(set_colors) <- sets
   }
 
-  p.mat <- plot_upset_matrix(matrix_data, set_colors)
+  p.mat <- plot_upset_matrix(matrix_data, set_colors, base_theme)
   p.bar <- plot_upset_bar(matrix_data, degree_colors, base_theme, log10_scale)
 
   if (return_list) {
@@ -122,12 +122,17 @@ prepare_upset_matrix <- function(df, item_col, set_col) {
 #' @param matrix_data List containing `matrix` and `segment` data frames from
 #'   `prepare_upset_matrix()`
 #' @param set_colors Named vector of colors for each set
+#' @param base_theme ggplot2 theme used to derive label text size
+#'   (default: `get_default_theme()`)
 #'
 #' @return A ggplot2 object
 #' @export
-plot_upset_matrix <- function(matrix_data, set_colors) {
+plot_upset_matrix <- function(matrix_data, set_colors,
+                              base_theme = get_default_theme()) {
   matrix <- matrix_data$matrix
   segment <- matrix_data$segment
+
+  label_size <- base_theme$text$size * 0.8
 
   # Determine number of sets for alternating background
   n_sets <- length(unique(matrix$sets))
@@ -165,7 +170,7 @@ plot_upset_matrix <- function(matrix_data, set_colors) {
     ) +
     theme_void() +
     theme(
-      axis.text.y = element_text(size = 6.4),
+      axis.text.y = element_text(size = label_size),
       legend.position = "none",
       plot.margin = margin(0, 0.1, 0.1, 0.1, unit = "cm")
     ) +

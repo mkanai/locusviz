@@ -4,13 +4,16 @@
 \alias{plot_upset_matrix}
 \title{Plot UpSet matrix panel}
 \usage{
-plot_upset_matrix(matrix_data, set_colors)
+plot_upset_matrix(matrix_data, set_colors, base_theme = get_default_theme())
 }
 \arguments{
 \item{matrix_data}{List containing `matrix` and `segment` data frames from
 `prepare_upset_matrix()`}
 
 \item{set_colors}{Named vector of colors for each set}
+
+\item{base_theme}{ggplot2 theme used to derive label text size
+(default: `get_default_theme()`)}
 }
 \value{
 A ggplot2 object

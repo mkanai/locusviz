@@ -27,6 +27,9 @@
 #' @param plot.gene Logical whether to include gene track panel (default: TRUE)
 #' @param plot.gene_score Logical whether to include gene score panel (default: FALSE)
 #' @param fontsize Numeric font size for all panels (default: 8)
+#' @param ggtheme Optional ggplot2 theme applied on top of every panel's
+#'   default theme. Use to override styling uniformly across all panels
+#'   (e.g. `theme(legend.position = "bottom")`). Default: NULL (no override).
 #' @param patchwork Logical whether to combine panels using patchwork (default: TRUE)
 #' @param rasterize Logical whether to rasterize scatter plots (default: FALSE)
 #' @param rasterize.dpi Numeric DPI for rasterization (default: 300)
@@ -75,6 +78,7 @@ plot_locuszoom <- function(data,
                            plot.gene = TRUE,
                            plot.gene_score = FALSE,
                            fontsize = 8,
+                           ggtheme = NULL,
                            patchwork = TRUE,
                            rasterize = FALSE,
                            rasterize.dpi = 300) {
@@ -101,16 +105,17 @@ plot_locuszoom <- function(data,
         ybreaks = manhattan.breaks,
         plot.loglog_p = manhattan.loglog_p,
         nlog10p_threshold = nlog10p_threshold,
-        ggtheme = get_default_theme(
-          fontsize = fontsize,
-          hide.xtext = (plot.fm | plot.r2),
-          hide.xtitle = TRUE
-        ),
         rasterize = rasterize,
         rasterize.dpi = rasterize.dpi
       ),
       manhattan.args
-    ))
+    )) +
+      get_default_theme(
+        fontsize = fontsize,
+        hide.xtext = (plot.fm | plot.r2),
+        hide.xtitle = TRUE
+      ) +
+      ggtheme
   )
   p_fm <- or_missing(
     plot.fm,
@@ -122,16 +127,17 @@ plot_locuszoom <- function(data,
         ylim = fm.ylim,
         ybreaks = fm.breaks,
         legend_title = fm.legend_title,
-        ggtheme = get_default_theme(
-          fontsize = fontsize,
-          hide.xtext = plot.r2,
-          hide.xtitle = TRUE
-        ),
         rasterize = rasterize,
         rasterize.dpi = rasterize.dpi
       ),
       fm.args
-    ))
+    )) +
+      get_default_theme(
+        fontsize = fontsize,
+        hide.xtext = plot.r2,
+        hide.xtitle = TRUE
+      ) +
+      ggtheme
   )
   p_r2 <- or_missing(
     plot.r2,
@@ -141,12 +147,13 @@ plot_locuszoom <- function(data,
         highlight_pos = highlight_pos,
         xlim = xlim,
         nlog10p_threshold = nlog10p_threshold,
-        ggtheme = get_default_theme(fontsize = fontsize, hide.xtitle = TRUE),
         rasterize = rasterize,
         rasterize.dpi = rasterize.dpi
       ),
       r2.args
-    ))
+    )) +
+      get_default_theme(fontsize = fontsize, hide.xtitle = TRUE) +
+      ggtheme
   )
   p_gene <- or_missing(
     plot.gene,

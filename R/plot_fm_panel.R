@@ -13,7 +13,6 @@
 #' @param ybreaks Numeric vector specifying y-axis break points
 #' @param point.size Numeric size for regular variant points (default: 1.5)
 #' @param point.size2 Numeric size for highlighted variant points (default: 3)
-#' @param ggtheme ggplot2 theme object (default: get_default_theme())
 #' @param background.layers List of additional ggplot2 layers to add as background
 #' @param rasterize Logical whether to rasterize the scatter plot (default: FALSE)
 #' @param rasterize.dpi Numeric DPI for rasterization (default: 300)
@@ -30,8 +29,11 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Basic fine-mapping plot
+#' # Basic fine-mapping plot (default theme applied automatically)
 #' plot_fm_panel(finemapping_data)
+#'
+#' # Override theme by adding it on top
+#' plot_fm_panel(finemapping_data) + get_default_theme(fontsize = 7)
 #'
 #' # With custom settings
 #' plot_fm_panel(
@@ -53,7 +55,6 @@ plot_fm_panel <- function(data,
                           ybreaks = seq(0, 1, by = 0.2),
                           point.size = 1.5,
                           point.size2 = 3,
-                          ggtheme = get_default_theme(),
                           background.layers = NULL,
                           rasterize = FALSE,
                           rasterize.dpi = 300,
@@ -142,7 +143,7 @@ plot_fm_panel <- function(data,
     )) +
     labs(x = "Position", y = "PIP", color = legend_title) +
     g_fm_title +
-    ggtheme +
+    get_default_theme() +
     scale_x +
     scale_y +
     scale_color_manual(

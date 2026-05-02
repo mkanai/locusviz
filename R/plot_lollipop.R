@@ -33,7 +33,7 @@
 #' @importFrom tidyr nest unnest
 #' @importFrom purrr map map_dfr
 #' @importFrom stringr str_remove str_split_fixed
-#' @importFrom BuenColors pretty_plot jdb_palette
+#' @importFrom BuenColors jdb_palette
 #' @importFrom cowplot theme_nothing
 #'
 #' @examples
@@ -64,20 +64,14 @@ plot_lollipop <- function(df,
   }
 
   my_theme <-
-    BuenColors::pretty_plot(fontsize = 8) +
+    get_default_theme() +
     theme(
       axis.title.x = element_blank(),
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       axis.ticks.length.x = unit(0, "pt"),
-      legend.position = c(1, 1),
-      legend.justification = c(1, 1),
-      legend.title = element_text(margin = margin(0, 0, 0, 0)),
-      legend.background = element_blank(),
       legend.key.size = unit(0.3, "cm"),
-      panel.border = element_blank(),
       plot.margin = margin(0, 0, 0, 0),
-      plot.tag = element_text(face = "bold"),
       plot.tag.position = c(0, 1)
     )
 

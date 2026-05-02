@@ -5,6 +5,10 @@
 #' customizable options for hiding axis elements.
 #'
 #' @param fontsize Numeric font size for all text elements (default: 8)
+#' @param tag.fontsize Numeric font size for plot tag (default: 8)
+#' @param title.lines Integer number of lines in the plot title; scales the
+#'   negative bottom margin so multi-line titles still sit inside the panel
+#'   (default: 1)
 #' @param legend.position Numeric vector for legend position (default: c(1,1) = top-right)
 #' @param legend.justification Numeric vector for legend justification (default: c(1,1))
 #' @param hide.xlab Logical whether to hide both x-axis text and title (default: FALSE)
@@ -18,7 +22,6 @@
 #' @return A ggplot2 theme object
 #'
 #' @import ggplot2
-#' @importFrom BuenColors pretty_plot L_border
 #'
 #' @examples
 #' # Get default theme
@@ -32,6 +35,8 @@
 #'
 #' @export
 get_default_theme <- function(fontsize = 8,
+                              tag.fontsize = 8,
+                              title.lines = 1,
                               legend.position = c(1, 1),
                               legend.justification = c(1, 1),
                               hide.xlab = FALSE,
@@ -42,17 +47,30 @@ get_default_theme <- function(fontsize = 8,
                               hide.ytitle = FALSE,
                               angle.xtext = NULL) {
   ggtheme <-
-    BuenColors::pretty_plot(fontsize = fontsize) +
-    BuenColors::L_border() +
+    theme_bw(base_size = fontsize) +
     theme(
+      panel.background = element_blank(),
+      panel.border = element_blank(),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.line = element_line(),
+      axis.text = element_text(colour = "black", family = "Helvetica"),
+      strip.background = element_rect(colour = "black", fill = "white"),
       plot.background = element_blank(),
       plot.margin = margin(0, 0.1, 0, 0.1, unit = "cm"),
-      plot.tag = element_text(face = "bold"),
-      plot.title = element_text(hjust = 4e-3, margin = margin(b = -12), size = fontsize),
+      plot.tag = element_text(face = "bold", size = tag.fontsize),
+      plot.title.position = "panel",
+      plot.title = element_text(
+        size = fontsize,
+        hjust = 0,
+        vjust = 1,
+        margin = margin(l = 2, b = -1.5 * fontsize * title.lines, unit = "pt")
+      ),
       legend.position = legend.position,
       legend.justification = legend.justification,
       legend.title = element_text(margin = margin(0, 0, 0, 0)),
       legend.background = element_blank(),
+      legend.key = element_blank(),
       legend.key.size = unit(0.2, "cm")
     )
 

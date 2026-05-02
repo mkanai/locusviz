@@ -13,7 +13,6 @@
 #' @param point.size2 Numeric size for highlighted variant points (default: 3)
 #' @param legend.ncol Number of columns for the legend (default: 2)
 #' @param nlog10p_threshold Numeric minimum -log10(p) value to display (default: 1)
-#' @param ggtheme ggplot2 theme object (default: get_default_theme())
 #' @param background.layers List of additional ggplot2 layers to add as background
 #' @param rasterize Logical whether to rasterize the scatter plot (default: FALSE)
 #' @param rasterize.dpi Numeric DPI for rasterization (default: 300)
@@ -28,8 +27,11 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Basic r² plot
+#' # Basic r² plot (default theme applied automatically)
 #' plot_r2_panel(gwas_data)
+#'
+#' # Override theme by adding it on top
+#' plot_r2_panel(gwas_data) + get_default_theme(fontsize = 7)
 #'
 #' # With custom settings
 #' plot_r2_panel(
@@ -51,7 +53,6 @@ plot_r2_panel <- function(data,
                           point.size2 = 3,
                           legend.ncol = 2,
                           nlog10p_threshold = 1,
-                          ggtheme = get_default_theme(),
                           background.layers = NULL,
                           rasterize = FALSE,
                           rasterize.dpi = 300) {
@@ -134,7 +135,7 @@ plot_r2_panel <- function(data,
       guide = FALSE,
       na.translate = FALSE
     ) +
-    ggtheme +
+    get_default_theme() +
     guides(color = guide_legend(ncol = legend.ncol))
 
   return(p_r2)

@@ -19,7 +19,6 @@ plot_manhattan_panel(
   title = NULL,
   r2_cols = c("navy", "lightskyblue", "green", "orange", "red"),
   lead_variant_col = "purple3",
-  ggtheme = get_default_theme(),
   background.layers = NULL,
   rasterize = FALSE,
   rasterize.dpi = 300
@@ -55,8 +54,6 @@ nlog10p, lead_variant (logical), and optionally r2}
 
 \item{lead_variant_col}{Character color for lead variant (default: "purple3")}
 
-\item{ggtheme}{ggplot2 theme object (default: get_default_theme())}
-
 \item{background.layers}{List of additional ggplot2 layers to add as background}
 
 \item{rasterize}{Logical whether to rasterize the scatter plot (default: FALSE)}
@@ -72,8 +69,11 @@ with optional LD coloring relative to a lead variant.
 }
 \examples{
 \dontrun{
-# Basic Manhattan plot
+# Basic Manhattan plot (default theme applied automatically)
 plot_manhattan_panel(gwas_data)
+
+# Override theme by adding it on top
+plot_manhattan_panel(gwas_data) + get_default_theme(fontsize = 7)
 
 # With custom settings
 plot_manhattan_panel(

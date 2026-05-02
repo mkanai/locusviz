@@ -14,7 +14,6 @@ plot_r2_panel(
   point.size2 = 3,
   legend.ncol = 2,
   nlog10p_threshold = 1,
-  ggtheme = get_default_theme(),
   background.layers = NULL,
   rasterize = FALSE,
   rasterize.dpi = 300
@@ -40,8 +39,6 @@ nlog10p, lead_variant, cs_id, and gnomad_lead_r2_* or gnomad_lead_r_* columns}
 
 \item{nlog10p_threshold}{Numeric minimum -log10(p) value to display (default: 1)}
 
-\item{ggtheme}{ggplot2 theme object (default: get_default_theme())}
-
 \item{background.layers}{List of additional ggplot2 layers to add as background}
 
 \item{rasterize}{Logical whether to rasterize the scatter plot (default: FALSE)}
@@ -57,8 +54,11 @@ variants and a lead variant, stratified by population from gnomAD data.
 }
 \examples{
 \dontrun{
-# Basic r² plot
+# Basic r² plot (default theme applied automatically)
 plot_r2_panel(gwas_data)
+
+# Override theme by adding it on top
+plot_r2_panel(gwas_data) + get_default_theme(fontsize = 7)
 
 # With custom settings
 plot_r2_panel(

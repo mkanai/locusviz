@@ -24,7 +24,7 @@
 #' @importFrom ggbio geom_alignment
 #' @importFrom GenomicRanges GRanges
 #' @importFrom IRanges IRanges
-#' @importFrom BuenColors jdb_palette pretty_plot
+#' @importFrom BuenColors jdb_palette
 #' @importFrom stringr str_starts str_remove
 #' @importFrom grid unit
 #'
@@ -103,13 +103,13 @@ plot_gene_panel <- function(chromosome,
         size = point.size
       )
     ) +
-    BuenColors::pretty_plot(fontsize = fontsize) +
-    theme(
-      panel.border = element_blank(),
-      axis.title.y = element_blank(),
-      axis.ticks = element_blank(),
-      axis.text = element_blank()
+    get_default_theme(
+      fontsize = fontsize,
+      hide.xtext = TRUE,
+      hide.ytext = TRUE,
+      hide.ytitle = TRUE
     ) +
+    theme(axis.ticks = element_blank()) +
     labs(x = sprintf("Chromosome %s", stringr::str_remove(chromosome, "^chr"))) +
     scale_y_continuous(expand = expansion()) +
     coord_cartesian(xlim = c(start, end), clip = "off")

@@ -6,6 +6,8 @@
 \usage{
 get_default_theme(
   fontsize = 8,
+  tag.fontsize = 8,
+  title.lines = 1,
   legend.position = c(1, 1),
   legend.justification = c(1, 1),
   hide.xlab = FALSE,
@@ -19,6 +21,12 @@ get_default_theme(
 }
 \arguments{
 \item{fontsize}{Numeric font size for all text elements (default: 8)}
+
+\item{tag.fontsize}{Numeric font size for plot tag (default: 8)}
+
+\item{title.lines}{Integer number of lines in the plot title; scales the
+negative bottom margin so multi-line titles still sit inside the panel
+(default: 1)}
 
 \item{legend.position}{Numeric vector for legend position (default: c(1,1) = top-right)}
 

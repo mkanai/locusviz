@@ -18,7 +18,6 @@
 #' @param title Character string for plot title
 #' @param r2_cols Character vector of colors for r² bins
 #' @param lead_variant_col Character color for lead variant (default: "purple3")
-#' @param ggtheme ggplot2 theme object (default: get_default_theme())
 #' @param background.layers List of additional ggplot2 layers to add as background
 #' @param rasterize Logical whether to rasterize the scatter plot (default: FALSE)
 #' @param rasterize.dpi Numeric DPI for rasterization (default: 300)
@@ -29,12 +28,15 @@
 #' @import ggplot2
 #' @importFrom ggrastr rasterize
 #' @importFrom scales trans_new
-#' @importFrom stringr str_remove str_count
+#' @importFrom stringr str_remove
 #'
 #' @examples
 #' \dontrun{
-#' # Basic Manhattan plot
+#' # Basic Manhattan plot (default theme applied automatically)
 #' plot_manhattan_panel(gwas_data)
+#'
+#' # Override theme by adding it on top
+#' plot_manhattan_panel(gwas_data) + get_default_theme(fontsize = 7)
 #'
 #' # With custom settings
 #' plot_manhattan_panel(
@@ -61,7 +63,6 @@ plot_manhattan_panel <- function(data,
                                  title = NULL,
                                  r2_cols = c("navy", "lightskyblue", "green", "orange", "red"),
                                  lead_variant_col = "purple3",
-                                 ggtheme = get_default_theme(),
                                  background.layers = NULL,
                                  rasterize = FALSE,
                                  rasterize.dpi = 300) {
@@ -89,14 +90,6 @@ plot_manhattan_panel <- function(data,
     limits = ylim,
     expand = expansion(c(0, 0.1), 0)
   )
-
-  if (!is.null(title)) {
-    ggtheme <- ggtheme + theme(plot.title = element_text(
-      hjust = 4e-3,
-      margin = margin(b = -12 * (stringr::str_count(title, "\n") + 1)),
-      size = ggtheme$text$size
-    ))
-  }
 
   if (!is.null(background.layers) & !is.list(background.layers)) {
     background.layers <- list(background.layers)
@@ -161,7 +154,7 @@ plot_manhattan_panel <- function(data,
     ) +
     scale_x +
     scale_y +
-    ggtheme
+    get_default_theme()
 
   return(p_manhattan)
 }

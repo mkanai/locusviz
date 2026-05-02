@@ -14,7 +14,6 @@ plot_fm_panel(
   ybreaks = seq(0, 1, by = 0.2),
   point.size = 1.5,
   point.size2 = 3,
-  ggtheme = get_default_theme(),
   background.layers = NULL,
   rasterize = FALSE,
   rasterize.dpi = 300,
@@ -42,8 +41,6 @@ and optionally cs_id for credible set membership}
 
 \item{point.size2}{Numeric size for highlighted variant points (default: 3)}
 
-\item{ggtheme}{ggplot2 theme object (default: get_default_theme())}
-
 \item{background.layers}{List of additional ggplot2 layers to add as background}
 
 \item{rasterize}{Logical whether to rasterize the scatter plot (default: FALSE)}
@@ -63,8 +60,11 @@ This function creates a panel showing fine-mapping posterior inclusion probabili
 }
 \examples{
 \dontrun{
-# Basic fine-mapping plot
+# Basic fine-mapping plot (default theme applied automatically)
 plot_fm_panel(finemapping_data)
+
+# Override theme by adding it on top
+plot_fm_panel(finemapping_data) + get_default_theme(fontsize = 7)
 
 # With custom settings
 plot_fm_panel(
