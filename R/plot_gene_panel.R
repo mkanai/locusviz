@@ -11,7 +11,7 @@
 #' @param highlight_pos Numeric vector of positions to highlight with diamonds
 #' @param highlight_pos_y Numeric y-position for highlight markers (default: 1)
 #' @param gene_col Color for gene tracks (default: blue from calma_azules palette)
-#' @param fontsize Numeric font size for plot text (default: 8)
+#' @param fontsize Numeric font size for plot text (default: 7)
 #' @param point.size Numeric size for highlight points (default: 2)
 #' @param label.size Numeric size for gene labels (default: 2)
 #' @param arrow.rate Numeric rate for directional arrows on genes (default: 0.015)
@@ -50,7 +50,7 @@ plot_gene_panel <- function(chromosome,
                             highlight_pos = NULL,
                             highlight_pos_y = 1,
                             gene_col = BuenColors::jdb_palette("calma_azules")[6],
-                            fontsize = 8,
+                            fontsize = 7,
                             point.size = 2,
                             label.size = 2,
                             arrow.rate = 0.015,

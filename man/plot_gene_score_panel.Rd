@@ -16,7 +16,7 @@ plot_gene_score_panel(
   distance.type = c("GB", "TSS"),
   method.levels = NULL,
   colors = NULL,
-  fontsize = 8,
+  fontsize = 7,
   area.max_size = 4
 )
 }
@@ -44,7 +44,7 @@ or "TSS" (transcription start site)}
 
 \item{colors}{Named vector of colors for each method}
 
-\item{fontsize}{Numeric font size for plot text (default: 8)}
+\item{fontsize}{Numeric font size for plot text (default: 7)}
 
 \item{area.max_size}{Numeric maximum size for dots (default: 4)}
 }

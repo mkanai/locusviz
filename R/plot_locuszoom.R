@@ -26,7 +26,7 @@
 #' @param plot.r2 Logical whether to include r2/LD panel (default: FALSE)
 #' @param plot.gene Logical whether to include gene track panel (default: TRUE)
 #' @param plot.gene_score Logical whether to include gene score panel (default: FALSE)
-#' @param fontsize Numeric font size for all panels (default: 8)
+#' @param fontsize Numeric font size for all panels (default: 7)
 #' @param ggtheme Optional ggplot2 theme applied on top of every panel's
 #'   default theme. Use to override styling uniformly across all panels
 #'   (e.g. `theme(legend.position = "bottom")`). Default: NULL (no override).
@@ -77,7 +77,7 @@ plot_locuszoom <- function(data,
                            plot.r2 = FALSE,
                            plot.gene = TRUE,
                            plot.gene_score = FALSE,
-                           fontsize = 8,
+                           fontsize = 7,
                            ggtheme = NULL,
                            patchwork = TRUE,
                            rasterize = FALSE,

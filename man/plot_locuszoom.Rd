@@ -26,7 +26,7 @@ plot_locuszoom(
   plot.r2 = FALSE,
   plot.gene = TRUE,
   plot.gene_score = FALSE,
-  fontsize = 8,
+  fontsize = 7,
   ggtheme = NULL,
   patchwork = TRUE,
   rasterize = FALSE,
@@ -77,7 +77,7 @@ chromosome, position, and additional columns depending on enabled panels}
 
 \item{plot.gene_score}{Logical whether to include gene score panel (default: FALSE)}
 
-\item{fontsize}{Numeric font size for all panels (default: 8)}
+\item{fontsize}{Numeric font size for all panels (default: 7)}
 
 \item{ggtheme}{Optional ggplot2 theme applied on top of every panel's
 default theme. Use to override styling uniformly across all panels

@@ -5,8 +5,8 @@
 \title{Get default ggplot2 theme for locusviz plots}
 \usage{
 get_default_theme(
-  fontsize = 8,
-  tag.fontsize = 8,
+  fontsize = 7,
+  tag.fontsize = 7,
   title.lines = 1,
   legend.position = c(1, 1),
   legend.justification = c(1, 1),
@@ -20,9 +20,9 @@ get_default_theme(
 )
 }
 \arguments{
-\item{fontsize}{Numeric font size for all text elements (default: 8)}
+\item{fontsize}{Numeric font size for all text elements (default: 7)}
 
-\item{tag.fontsize}{Numeric font size for plot tag (default: 8)}
+\item{tag.fontsize}{Numeric font size for plot tag (default: 7)}
 
 \item{title.lines}{Integer number of lines in the plot title; scales the
 negative bottom margin so multi-line titles still sit inside the panel

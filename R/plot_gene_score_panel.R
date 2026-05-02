@@ -16,7 +16,7 @@
 #'   or "TSS" (transcription start site)
 #' @param method.levels Character vector specifying the order of scoring methods
 #' @param colors Named vector of colors for each method
-#' @param fontsize Numeric font size for plot text (default: 8)
+#' @param fontsize Numeric font size for plot text (default: 7)
 #' @param area.max_size Numeric maximum size for dots (default: 4)
 #'
 #' @return A ggplot2 object showing the gene score panel
@@ -51,7 +51,7 @@ plot_gene_score_panel <- function(chromosome,
                                   distance.type = c("GB", "TSS"),
                                   method.levels = NULL,
                                   colors = NULL,
-                                  fontsize = 8,
+                                  fontsize = 7,
                                   area.max_size = 4) {
   genome_build <- match.arg(genome_build)
   distance.type <- match.arg(distance.type)

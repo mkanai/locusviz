@@ -13,7 +13,7 @@ plot_gene_panel(
   highlight_pos = NULL,
   highlight_pos_y = 1,
   gene_col = BuenColors::jdb_palette("calma_azules")[6],
-  fontsize = 8,
+  fontsize = 7,
   point.size = 2,
   label.size = 2,
   arrow.rate = 0.015,
@@ -38,7 +38,7 @@ plot_gene_panel(
 
 \item{gene_col}{Color for gene tracks (default: blue from calma_azules palette)}
 
-\item{fontsize}{Numeric font size for plot text (default: 8)}
+\item{fontsize}{Numeric font size for plot text (default: 7)}
 
 \item{point.size}{Numeric size for highlight points (default: 2)}
 

@@ -4,8 +4,8 @@
 #' plotting functions. It provides a clean, publication-ready appearance with
 #' customizable options for hiding axis elements.
 #'
-#' @param fontsize Numeric font size for all text elements (default: 8)
-#' @param tag.fontsize Numeric font size for plot tag (default: 8)
+#' @param fontsize Numeric font size for all text elements (default: 7)
+#' @param tag.fontsize Numeric font size for plot tag (default: 7)
 #' @param title.lines Integer number of lines in the plot title; scales the
 #'   negative bottom margin so multi-line titles still sit inside the panel
 #'   (default: 1)
@@ -34,8 +34,8 @@
 #' theme_large <- get_default_theme(fontsize = 12)
 #'
 #' @export
-get_default_theme <- function(fontsize = 8,
-                              tag.fontsize = 8,
+get_default_theme <- function(fontsize = 7,
+                              tag.fontsize = 7,
                               title.lines = 1,
                               legend.position = c(1, 1),
                               legend.justification = c(1, 1),
@@ -58,7 +58,12 @@ get_default_theme <- function(fontsize = 8,
       strip.background = element_rect(colour = "black", fill = "white"),
       plot.background = element_blank(),
       plot.margin = margin(0, 0.1, 0, 0.1, unit = "cm"),
-      plot.tag = element_text(face = "bold", size = tag.fontsize),
+      plot.tag = element_text(
+        face = "bold",
+        size = tag.fontsize,
+        vjust = 1,
+        margin = margin(b = -1.5 * tag.fontsize, unit = "pt")
+      ),
       plot.title.position = "panel",
       plot.title = element_text(
         size = fontsize,
