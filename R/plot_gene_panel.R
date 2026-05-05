@@ -109,7 +109,11 @@ plot_gene_panel <- function(chromosome,
       hide.ytext = TRUE,
       hide.ytitle = TRUE
     ) +
-    theme(axis.ticks = element_blank()) +
+    theme(
+      axis.ticks = element_blank(),
+      axis.line = element_blank(),
+      plot.margin = margin(5.5, 5.5, 5.5, 5.5, unit = "pt")
+    ) +
     labs(x = sprintf("Chromosome %s", stringr::str_remove(chromosome, "^chr"))) +
     scale_y_continuous(expand = expansion()) +
     coord_cartesian(xlim = c(start, end), clip = "off")
