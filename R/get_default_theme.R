@@ -61,8 +61,7 @@ get_default_theme <- function(fontsize = 7,
       plot.tag = element_text(
         face = "bold",
         size = tag.fontsize,
-        vjust = 1,
-        margin = margin(b = -1.5 * tag.fontsize, unit = "pt")
+        vjust = 1
       ),
       plot.title.position = "panel",
       plot.title = element_text(
