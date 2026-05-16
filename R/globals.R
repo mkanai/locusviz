@@ -19,11 +19,11 @@ utils::globalVariables(c(
   "new_position", "nlog10p",
   "pindex", "pip", "pop", "position", "position2", "protein_id",
   "pvalue",
-  "r2", "ref",
+  "r2", "ref", "row",
   "score", "se", "seqlengths", "seqnames", "set", "sets",
-  "sets_collapsed", "signed_pip", "start", "strand",
+  "sets_collapsed", "signed_pip", "start", "strand", "symbol",
   "susie.beta_posterior",
   "total", "trait", "tss", "tx_id", "tx_name", "txdb_v34_hg38", "type",
   "variant", "variant2", "variant_normalized", "variation2",
-  "x", "xmax", "xmin", "y", "yend", "ymax", "ymin"
+  "x", "xend", "xmax", "xmin", "y", "yend", "ymax", "ymin"
 ))

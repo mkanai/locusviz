@@ -11,14 +11,21 @@ plot_gene_panel(
   genome_build = c("hg19", "hg38"),
   txdb = NULL,
   highlight_pos = NULL,
-  highlight_pos_y = 1,
+  highlight_pos_y = NULL,
   gene_col = BuenColors::jdb_palette("calma_azules")[6],
   fontsize = 7,
   point.size = 2,
   label.size = 2,
   arrow.rate = 0.015,
   length = unit(0.1, "cm"),
-  background.layers = NULL
+  background.layers = NULL,
+  chars_per_panel = 100,
+  max_rows = NULL,
+  gene_priority = NULL,
+  exon.height = 0.3,
+  label.color = "gray30",
+  label.offset = 0.45,
+  engine = c("native", "ggbio")
 )
 }
 \arguments{
@@ -34,7 +41,9 @@ plot_gene_panel(
 
 \item{highlight_pos}{Numeric vector of positions to highlight with diamonds}
 
-\item{highlight_pos_y}{Numeric y-position for highlight markers (default: 1)}
+\item{highlight_pos_y}{Numeric y-position for highlight markers. If NULL
+(default), the markers are placed above the top label row (native) or
+at y=1 (ggbio).}
 
 \item{gene_col}{Color for gene tracks (default: blue from calma_azules palette)}
 
@@ -44,29 +53,85 @@ plot_gene_panel(
 
 \item{label.size}{Numeric size for gene labels (default: 2)}
 
-\item{arrow.rate}{Numeric rate for directional arrows on genes (default: 0.015)}
+\item{arrow.rate}{Numeric. Fraction of the panel x-range used as the
+target spacing between consecutive strand arrowheads on a gene body.
+Default 0.015 yields roughly one arrowhead per ~1.5% of panel width.
+Setting this to 0 disables strand arrowheads.}
 
-\item{length}{Unit object specifying arrow length (default: unit(0.1, "cm"))}
+\item{length}{Unit object specifying strand arrowhead size (default: unit(0.1, "cm"))}
 
 \item{background.layers}{List of additional ggplot2 layers to add as background}
+
+\item{chars_per_panel}{(native engine only) Approximate number of
+characters that fit across the panel at the active font size. Lower
+values give more horizontal padding per label (and hence more rows);
+raise it if your figure is wider than ~6in. Default: 100.}
+
+\item{max_rows}{(native engine only) Optional integer cap on the number
+of gene rows. Genes that don't fit are silently dropped. NULL
+(default) means no cap.}
+
+\item{gene_priority}{(native engine only) Optional character vector of
+gene symbols to pack first. Anything not listed competes for the
+remaining rows in genomic order. Useful with `max_rows` to guarantee
+that specific genes are kept.}
+
+\item{exon.height}{(native engine only) Numeric vertical extent of exon
+rectangles in row units (default: 0.3, so exons span row±0.15).}
+
+\item{label.color}{(native engine only) Character color for gene labels
+(default: "gray30").}
+
+\item{label.offset}{(native engine only) Numeric vertical offset of the
+label above its gene body, in row units (default: 0.45).}
+
+\item{engine}{Either `"native"` (default; collision-aware ggplot2
+implementation) or `"ggbio"` (falls back to `ggbio::geom_alignment` —
+useful for reproducing prior figures).}
 }
 \value{
 A ggplot2 object showing the gene track panel
 }
 \description{
-This function creates a gene track panel showing gene annotations for a genomic region,
-with exons, introns, and gene direction indicated.
+Builds a gene track panel showing gene annotations for a genomic region.
+Defaults to a pure-ggplot2 implementation (`engine = "native"`) that
+packs genes into rows so neither gene bodies nor their text labels
+collide horizontally — a key improvement over `ggbio::geom_alignment`,
+which places labels at fixed offsets and overlaps unreadably in dense
+loci. Pass `engine = "ggbio"` to fall back to the original
+`ggbio::geom_alignment` rendering.
+}
+\details{
+Row assignment (native engine) packs each gene's body interval *unioned
+with* the bounding box of its text label (estimated from
+`chars_per_panel`). A row can hold multiple genes only when their labels
+also fit side-by-side; densely labelled regions naturally spill onto
+more rows instead of stacking labels on top of each other.
+
+Strand direction is shown by repeated open arrowheads spaced along each
+gene body, with spacing controlled by `arrow.rate`.
 }
 \examples{
 \dontrun{
 # Basic gene panel
 plot_gene_panel("chr1", 1000000, 2000000)
 
-# With highlighted positions
+# Dense locus — naturally grows extra rows so labels never overlap
+plot_gene_panel("chr19", 17500000, 19500000, genome_build = "hg38")
+
+# Keep specific genes visible when capping rows
 plot_gene_panel(
-  "chr1", 1000000, 2000000,
-  highlight_pos = c(1234567, 1567890),
-  genome_build = "hg38"
+  "chr19", 17500000, 19500000,
+  genome_build = "hg38",
+  max_rows = 3,
+  gene_priority = c("JUND", "UBA52", "IFI30")
+)
+
+# Fall back to the original ggbio rendering
+plot_gene_panel(
+  "chr19", 17500000, 19500000,
+  genome_build = "hg38",
+  engine = "ggbio"
 )
 }
 
