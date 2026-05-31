@@ -27,6 +27,13 @@ def get_canonical_transcripts(**sites_table_paths):
     return canonical_transcripts
 
 
-ht = get_canonical_transcripts(genomes="gs://gcp-public-data--gnomad/release/3.1.2/ht/genomes/gnomad.genomes.v3.1.2.sites.ht")
+# gnomAD v4.1.1 uses VEP v105 / GENCODE v39 on GRCh38.
+# The genomes sites HT covers the whole genome, so canonical transcript
+# annotations are captured for essentially every gene (matches the prior
+# v3.1.2 genomes-only approach). Add an `exomes=...` kwarg here if you also
+# want to union in the v4.1.1 exomes sites HT.
+ht = get_canonical_transcripts(
+    genomes="gs://gcp-public-data--gnomad/release/4.1.1/ht/genomes/gnomad.genomes.v4.1.1.sites.ht"
+)
 ht = ht.filter(ht.gene_id.startswith("ENSG"))
-ht.export("gs://ukbb-hail-tmp/canonical_transcripts_grch38.tsv.bgz")
+ht.export("gs://finngen-xavier-tmp-7days/canonical_transcripts_grch38_v39.tsv.bgz")

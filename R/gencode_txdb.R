@@ -39,16 +39,24 @@ gencode_txdb <- function(version = "19",
 
   genome <- match.arg(genome)
 
+  # The GENCODE GTFs are ~55 MB; bump the download.file timeout (default 60s)
+  # so the transfer has time to finish on slower connections.
+  old_timeout <- getOption("timeout")
+  options(timeout = max(old_timeout, 1200))
+  on.exit(options(timeout = old_timeout), add = TRUE)
+
   ## Locate file
+  # EBI serves the same paths over HTTPS; prefer it over the flaky ftp:// host.
   if (genome == "hg19") {
     gtf_file <-
-      "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gff3.gz"
+      "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gff3.gz"
     canonical_transcript_file <- system.file(package = "locusviz", "extdata", "canonical_transcripts_grch37.tsv.gz")
   } else if (genome == "hg38") {
+    # gnomAD v4.1.1 uses VEP v105 / GENCODE v39 on GRCh38.
     gtf_file <-
-      "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_35/gencode.v35.annotation.gff3.gz"
+      "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_39/gencode.v39.annotation.gff3.gz"
     # https://github.com/broadinstitute/gnomad-browser/blob/master/data/docs/gene_models.md#canonical-transcripts
-    canonical_transcript_file <- system.file(package = "locusviz", "extdata", "canonical_transcripts_grch38_v35.tsv.gz")
+    canonical_transcript_file <- system.file(package = "locusviz", "extdata", "canonical_transcripts_grch38_v39.tsv.gz")
   }
 
 
@@ -186,14 +194,14 @@ get_tss_gene_body <- function(txdb, chromosomes = paste0("chr", c(seq(22), "X"))
 #'
 #' @export
 write_txdb_files <- function(chromosomes = paste0("chr", c(seq(22), "X"))) {
-  txdb_v35_hg38 <- gencode_txdb(genome = "hg38", chrs = chromosomes)
-  AnnotationDbi::saveDb(txdb_v35_hg38, "inst/extdata/txdb_v35_hg38.sqlite")
+  txdb_v39_hg38 <- gencode_txdb(genome = "hg38", chrs = chromosomes)
+  AnnotationDbi::saveDb(txdb_v39_hg38, "inst/extdata/txdb_v39_hg38.sqlite")
 
   txdb_v19_hg19 <- gencode_txdb(genome = "hg19", chrs = chromosomes)
   AnnotationDbi::saveDb(txdb_v19_hg19, "inst/extdata/txdb_v19_hg19.sqlite")
 
-  tss_v34_hg38 <- get_tss_gene_body(txdb_v34_hg38, chromosomes)
-  save(tss_v34_hg38, file = "data/tss_v34_hg38.RData")
+  tss_v39_hg38 <- get_tss_gene_body(txdb_v39_hg38, chromosomes)
+  save(tss_v39_hg38, file = "data/tss_v39_hg38.RData")
 
   tss_v19_hg19 <- get_tss_gene_body(txdb_v19_hg19, chromosomes) %>%
     dplyr::mutate(chromosome = stringr::str_remove(chromosome, "^chr"))

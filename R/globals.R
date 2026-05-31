@@ -23,7 +23,7 @@ utils::globalVariables(c(
   "score", "se", "seqlengths", "seqnames", "set", "sets",
   "sets_collapsed", "signed_pip", "start", "strand", "symbol",
   "susie.beta_posterior",
-  "total", "trait", "tss", "tx_id", "tx_name", "txdb_v34_hg38", "type",
+  "total", "trait", "tss", "tx_id", "tx_name", "txdb_v39_hg38", "type",
   "variant", "variant2", "variant_normalized", "variation2",
   "x", "xend", "xmax", "xmin", "y", "yend", "ymax", "ymin"
 ))
