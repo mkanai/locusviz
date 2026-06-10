@@ -63,3 +63,12 @@ test_that("npc core reproduces trackViewer jitterLables + reAdjustLabels", {
 
   expect_equal(ours, as.numeric(ref_npc), tolerance = 1e-8)
 })
+
+test_that(".readjust_positions_npc clamps edge-crowded points into [0, 1]", {
+  # A dense cluster hard against the right edge: upstream reAdjustLabels would
+  # spread some points past 1.0 (npc); our port clamps them into [0, 1].
+  pos <- c(0.95, 0.96, 0.97, 0.98, 0.99, 1.00)
+  out <- .readjust_positions_npc(pos, line_w = 0.05)
+  expect_true(all(out >= 0 & out <= 1))
+  expect_length(out, length(pos))
+})

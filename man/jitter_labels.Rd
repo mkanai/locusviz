@@ -2,28 +2,34 @@
 % Please edit documentation in R/jitter_labels.R
 \name{jitter_labels}
 \alias{jitter_labels}
-\title{Jitter labels to avoid overlapping}
+\title{Jitter labels to avoid horizontal overlap}
 \usage{
-jitter_labels(label.pos, xscale)
+jitter_labels(label.pos, xscale, label.width = 0.025, weight = 1.2)
 }
 \arguments{
-\item{label.pos}{Numeric vector or data frame of label positions}
+\item{label.pos}{Numeric vector of label positions in data coordinates.}
 
-\item{xscale}{Numeric vector of length 2 specifying the x-axis scale limits}
+\item{xscale}{Numeric length-2 vector giving the increasing x-axis range
+c(min, max). Reversed scales are not supported.}
+
+\item{label.width}{Label footprint as a fraction of the axis range (npc).
+Default `0.025` approximates one line of text on a ~7-inch device.}
+
+\item{weight}{Spacing weight passed to the jitter pass (default `1.2`).}
 }
 \value{
-Adjusted label positions with jittering applied to avoid overlaps
+Numeric vector of adjusted positions in data coordinates, in the same
+  order as `label.pos`.
 }
 \description{
-This function adjusts label positions to prevent overlapping when plotting
-multiple labels at similar x-coordinates. It uses the trackViewer package's
-label adjustment algorithms.
+Adjusts a set of x positions so labels drawn at them do not overlap, by
+spreading crowded positions apart and re-balancing them across the axis. The
+algorithm runs entirely in npc (`[0, 1]`) space and is deterministic: the
+label footprint is supplied explicitly via `label.width` rather than measured
+from the current graphics device. For draw-time-correct spacing measured
+against the real panel, use [geom_jitter_text()] instead.
 }
 \examples{
-\dontrun{
-# Adjust label positions for a plot
 positions <- c(100, 105, 110, 115)
-adjusted <- jitter_labels(positions, xscale = c(0, 1000))
-}
-
+jitter_labels(positions, xscale = c(0, 1000))
 }

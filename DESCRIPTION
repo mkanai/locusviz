@@ -28,6 +28,7 @@ Imports:
   GenomeInfoDb,
   GenomicFeatures,
   GenomicRanges,
+  grid,
   ggbio,
   ggrastr,
   IRanges,
