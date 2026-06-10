@@ -143,3 +143,40 @@
   pos <- (rep(as.numeric(names(tbl)), tbl) - 1 + coef) * line_w
   pmin(pmax(pos, 0), 1)
 }
+
+#' Jitter labels to avoid horizontal overlap
+#'
+#' Adjusts a set of x positions so labels drawn at them do not overlap, by
+#' spreading crowded positions apart and re-balancing them across the axis. The
+#' algorithm runs entirely in npc (`[0, 1]`) space and is deterministic: the
+#' label footprint is supplied explicitly via `label.width` rather than measured
+#' from the current graphics device. For draw-time-correct spacing measured
+#' against the real panel, use [geom_jitter_text()] instead.
+#'
+#' @param label.pos Numeric vector of label positions in data coordinates.
+#' @param xscale Numeric length-2 vector giving the increasing x-axis range
+#'   c(min, max). Reversed scales are not supported.
+#' @param label.width Label footprint as a fraction of the axis range (npc).
+#'   Default `0.025` approximates one line of text on a ~7-inch device.
+#' @param weight Spacing weight passed to the jitter pass (default `1.2`).
+#' @return Numeric vector of adjusted positions in data coordinates, in the same
+#'   order as `label.pos`.
+#' @examples
+#' positions <- c(100, 105, 110, 115)
+#' jitter_labels(positions, xscale = c(0, 1000))
+#' @export
+jitter_labels <- function(label.pos, xscale, label.width = 0.025,
+                          weight = 1.2) {
+  stopifnot(length(xscale) == 2, xscale[1] < xscale[2])
+  n <- length(label.pos)
+  if (n < 2) {
+    return(label.pos)
+  }
+  ord <- order(label.pos)
+  pos_npc <- (label.pos[ord] - xscale[1]) / diff(xscale)
+  pos_npc <- .jitter_positions_npc(pos_npc, line_w = label.width, weight = weight)
+  pos_npc <- .readjust_positions_npc(pos_npc, line_w = label.width)
+  out <- numeric(n)
+  out[ord] <- pos_npc * diff(xscale) + xscale[1]
+  out
+}
