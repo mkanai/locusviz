@@ -45,7 +45,9 @@ Imports:
   jsonlite
 Suggests:
   ComplexHeatmap,
+  testthat (>= 3.0.0),
   trackViewer,
   txdbmaker
 Remotes:
   caleblareau/BuenColors
+Config/testthat/edition: 3
