@@ -16,6 +16,7 @@ geom_jitter_text(
   connector.colour = "grey50",
   connector.linetype = "dotted",
   connector.size = 0.2,
+  connector.straight = 0.33,
   weight = 1.2,
   na.rm = FALSE,
   show.legend = NA,
@@ -105,6 +106,13 @@ lists which parameters it can accept.
 \item{connector.linetype}{Line type of the leader line (default `"dotted"`).}
 
 \item{connector.size}{Line width of the leader line (default `0.2`).}
+
+\item{connector.straight}{Fraction of the connector's vertical span, measured
+from the label end, drawn as a straight vertical segment; the remainder
+(toward the anchor) is drawn diagonally. This reproduces trackViewer's
+leader style, where the diagonal absorbs the horizontal jitter and a short
+vertical segment enters the label (default `0.33`). Set to `0` for a single
+straight diagonal from anchor to label.}
 
 \item{weight}{Spacing weight passed to the jitter pass (default `1.2`).}
 

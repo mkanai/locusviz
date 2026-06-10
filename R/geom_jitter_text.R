@@ -13,6 +13,12 @@
 #' @param connector.colour Colour of the leader line (default `"grey50"`).
 #' @param connector.linetype Line type of the leader line (default `"dotted"`).
 #' @param connector.size Line width of the leader line (default `0.2`).
+#' @param connector.straight Fraction of the connector's vertical span, measured
+#'   from the label end, drawn as a straight vertical segment; the remainder
+#'   (toward the anchor) is drawn diagonally. This reproduces trackViewer's
+#'   leader style, where the diagonal absorbs the horizontal jitter and a short
+#'   vertical segment enters the label (default `0.33`). Set to `0` for a single
+#'   straight diagonal from anchor to label.
 #' @param weight Spacing weight passed to the jitter pass (default `1.2`).
 #' @section Aesthetics:
 #' `geom_jitter_text()` understands `x`, `y`, `label` (required), plus `yend`
@@ -34,6 +40,7 @@ geom_jitter_text <- function(mapping = NULL, data = NULL, stat = "identity",
                              connector.colour = "grey50",
                              connector.linetype = "dotted",
                              connector.size = 0.2,
+                             connector.straight = 0.33,
                              weight = 1.2,
                              na.rm = FALSE,
                              show.legend = NA,
@@ -46,6 +53,7 @@ geom_jitter_text <- function(mapping = NULL, data = NULL, stat = "identity",
       connector.colour = connector.colour,
       connector.linetype = connector.linetype,
       connector.size = connector.size,
+      connector.straight = connector.straight,
       weight = weight,
       na.rm = na.rm,
       ...
@@ -70,6 +78,7 @@ GeomJitterText <- ggproto("GeomJitterText", Geom,
                         connector.colour = "grey50",
                         connector.linetype = "dotted",
                         connector.size = 0.2,
+                        connector.straight = 0.33,
                         weight = 1.2,
                         na.rm = FALSE) {
     data <- coord$transform(data, panel_params)
@@ -84,6 +93,7 @@ GeomJitterText <- ggproto("GeomJitterText", Geom,
       connector.colour = connector.colour,
       connector.linetype = connector.linetype,
       connector.size = connector.size,
+      connector.straight = connector.straight,
       weight = weight,
       cl = "jitter_text_grob"
     )
@@ -145,18 +155,31 @@ makeContent.jitter_text_grob <- function(x) {
   )
 
   if (isTRUE(x$connector)) {
-    seg <- grid::segmentsGrob(
+    # trackViewer-style leader line: a diagonal from the anchor up to the
+    # label's (jittered) x, absorbing the horizontal shift, then a short
+    # straight vertical segment at the label's x entering the label. With no
+    # jitter both segments are vertical, giving a single straight line.
+    gp <- grid::gpar(
+      col = x$connector.colour,
+      lty = x$connector.linetype,
+      lwd = x$connector.size * ggplot2::.pt
+    )
+    y_break <- data$y - x$connector.straight * (data$y - data$yend)
+    seg_diag <- grid::segmentsGrob(
       x0 = grid::unit(data$x, "npc"),
       y0 = grid::unit(data$yend, "npc"),
       x1 = grid::unit(xj, "npc"),
-      y1 = grid::unit(data$y, "npc"),
-      gp = grid::gpar(
-        col = x$connector.colour,
-        lty = x$connector.linetype,
-        lwd = x$connector.size * ggplot2::.pt
-      )
+      y1 = grid::unit(y_break, "npc"),
+      gp = gp
     )
-    children <- grid::gList(seg, txt)
+    seg_straight <- grid::segmentsGrob(
+      x0 = grid::unit(xj, "npc"),
+      y0 = grid::unit(y_break, "npc"),
+      x1 = grid::unit(xj, "npc"),
+      y1 = grid::unit(data$y, "npc"),
+      gp = gp
+    )
+    children <- grid::gList(seg_diag, seg_straight, txt)
   } else {
     children <- grid::gList(txt)
   }
