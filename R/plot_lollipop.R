@@ -209,30 +209,27 @@ plot_lollipop <- function(df,
         size = 0.2,
         color = "grey50"
       ) +
-      geom_segment(
+      geom_jitter_text(
         aes(
           x = position2,
-          xend = position2,
-          y = signed_pip,
-          yend = label.y
+          y = label.y,
+          yend = signed_pip,
+          label = label
         ),
-        data = df %>% filter(!is.na(label)),
-        size = 0.2,
-        color = "grey50",
-        linetype = "dotted"
+        data = df %>% dplyr::filter(!is.na(label)),
+        angle = 90,
+        vjust = 0.5,
+        hjust = hjust,
+        size = 2,
+        connector = TRUE,
+        connector.colour = "grey50",
+        connector.linetype = "dotted",
+        connector.size = 0.2
       ) +
       g_point +
       geom_text(aes(position2, signed_pip, label = idx),
         size = 2,
         color = "white"
-      ) +
-      geom_text(
-        aes(x = position2, y = label.y, label = label),
-        data = df %>% filter(!is.na(label)),
-        angle = 90,
-        vjust = 0.5,
-        hjust = hjust,
-        size = 2
       ) +
       p_theme +
       my_scale_y +
