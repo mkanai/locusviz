@@ -23,9 +23,8 @@
 #' @param genome_build Character string specifying genome build: 'hg19' or 'hg38'
 #' @param txdb Optional TxDb object. If NULL, will be loaded based on genome_build
 #' @param highlight_pos Numeric vector of positions to highlight with diamonds
-#' @param highlight_pos_y Numeric y-position for highlight markers. If NULL
-#'   (default), the markers are placed above the top label row (native) or
-#'   at y=1 (ggbio).
+#' @param highlight_pos_y Numeric y-position for highlight markers
+#'   (default: 1, i.e. on the bottom gene row). Identical across engines.
 #' @param gene_col Color for gene tracks (default: blue from calma_azules palette)
 #' @param fontsize Numeric font size for plot text (default: 7)
 #' @param point.size Numeric size for highlight points (default: 2)
@@ -98,7 +97,7 @@ plot_gene_panel <- function(chromosome,
                             genome_build = c("hg19", "hg38"),
                             txdb = NULL,
                             highlight_pos = NULL,
-                            highlight_pos_y = NULL,
+                            highlight_pos_y = 1,
                             gene_col = BuenColors::jdb_palette("calma_azules")[6],
                             fontsize = 7,
                             point.size = 2,
@@ -128,6 +127,9 @@ plot_gene_panel <- function(chromosome,
   if (length(highlight_pos) == 0) {
     highlight_pos <- NULL
   }
+  if (is.null(highlight_pos_y)) {
+    highlight_pos_y <- 1
+  }
 
   if (engine == "ggbio") {
     return(plot_gene_panel_ggbio(
@@ -135,7 +137,7 @@ plot_gene_panel <- function(chromosome,
       start = start, end = end,
       txdb = txdb,
       highlight_pos = highlight_pos,
-      highlight_pos_y = if (is.null(highlight_pos_y)) 1 else highlight_pos_y,
+      highlight_pos_y = highlight_pos_y,
       gene_col = gene_col,
       fontsize = fontsize,
       point.size = point.size,
@@ -179,12 +181,6 @@ plot_gene_panel <- function(chromosome,
       genes <- genes[keep, , drop = FALSE]
       features <- features[features$gene_id %in% genes$gene_id, , drop = FALSE]
     }
-  }
-
-  n_rows <- if (nrow(genes) > 0) max(genes$row) else 1L
-
-  if (is.null(highlight_pos_y)) {
-    highlight_pos_y <- n_rows + label.offset + 0.6
   }
 
   exons <- features[features$type %in% c("cds", "utr", "exon"), , drop = FALSE]

@@ -11,7 +11,7 @@ plot_gene_panel(
   genome_build = c("hg19", "hg38"),
   txdb = NULL,
   highlight_pos = NULL,
-  highlight_pos_y = NULL,
+  highlight_pos_y = 1,
   gene_col = BuenColors::jdb_palette("calma_azules")[6],
   fontsize = 7,
   point.size = 2,
@@ -41,9 +41,8 @@ plot_gene_panel(
 
 \item{highlight_pos}{Numeric vector of positions to highlight with diamonds}
 
-\item{highlight_pos_y}{Numeric y-position for highlight markers. If NULL
-(default), the markers are placed above the top label row (native) or
-at y=1 (ggbio).}
+\item{highlight_pos_y}{Numeric y-position for highlight markers
+(default: 1, i.e. on the bottom gene row). Identical across engines.}
 
 \item{gene_col}{Color for gene tracks (default: blue from calma_azules palette)}
 
